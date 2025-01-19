@@ -1,0 +1,81 @@
+@use 'sass:color';
+@use '../../scss/main.scss' as *;
+
+.translate {
+  @include page-style;
+
+  &__main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 4rem;
+
+    &--left,
+    &--right {
+      display: flex;
+      flex-direction: column;
+      row-gap: 1.2rem;
+
+      .language-select {
+        font-size: 1.6rem;
+      }
+
+      .input-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 20.5rem;
+        row-gap: 0.8rem;
+        outline: 1px solid $color-outline;
+        border-radius: 0.8rem;
+        background: #fff;
+
+        textarea {
+          border: none;
+          outline: none;
+          resize: none;
+          width: 100%;
+          height: 100%;
+          font-size: 1.6rem;
+          padding: 0 1.2rem;
+          margin-top: 1rem;
+          scrollbar-width: none;
+
+          &::placeholder {
+            color: $color-placeholder;
+          }
+
+          &:disabled {
+            background: #fff;
+            margin-bottom: 1rem;
+          }
+        }
+
+        &__bottom {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          padding: 0 1.2rem 1rem;
+
+          &--counter {
+            font-size: 1.2rem;
+            color: $color-placeholder;
+          }
+
+          &--button {
+            background: $color-primary;
+            color: $color-white;
+            font-size: 1.4rem;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.6rem;
+            transition: background 0.15s ease-out;
+
+            &:hover {
+              background: adjust($color: $color-primary, $lightness: -5%);
+            }
+          }
+        }
+      }
+    }
+  }
+}

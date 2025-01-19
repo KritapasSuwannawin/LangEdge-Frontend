@@ -8,7 +8,7 @@ import useAuth from './hooks/useAuth';
 import { logError } from './module/systemModule';
 
 import './App.scss';
-import Home from './pages/home/Home';
+import Translate from './pages/translate/Translate';
 import Loader from './components/loader/Loader';
 import Nav from './components/nav/Nav';
 
@@ -34,8 +34,8 @@ function App() {
           <Nav />
 
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="/translate" element={<Translate />} />
+            <Route path="*" element={<Navigate to="/translate" />} />
           </Routes>
         </>
       )}

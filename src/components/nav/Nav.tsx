@@ -4,7 +4,7 @@ function Nav() {
   return (
     <nav className="nav">
       <div className="nav__logo">
-        <h1 className="nav__logo--text">React Starter</h1>
+        <h1 className="nav__logo--text">LangEdge AI</h1>
       </div>
     </nav>
   );
