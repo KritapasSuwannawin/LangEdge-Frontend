@@ -1,0 +1,15 @@
+@use '../../scss/main.scss' as *;
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 4rem;
+
+  &__logo {
+    &--text {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+  }
+}

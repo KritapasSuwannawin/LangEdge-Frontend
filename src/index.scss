@@ -1,0 +1,73 @@
+@use './scss/main.scss' as *;
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html,
+body,
+#root {
+  overscroll-behavior: none;
+  height: 100%;
+  background: linear-gradient(180deg, rgba($color: $color-primary, $alpha: 0.04) 0, #fff 100%);
+}
+
+html {
+  font-size: 62.5%; // 1rem = 10px
+  line-height: 1.5;
+  scroll-behavior: smooth;
+  color: $color-black;
+
+  @media (max-width: $breakpoint-tablet-horizontal) {
+    font-size: 56.25%; // 1rem = 9px
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 50%; // 1rem = 8px
+  }
+}
+
+body {
+  font-family: $font-primary;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  border: none;
+  background: none;
+  transition: all 0.175s ease-out;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:disabled {
+    opacity: 0.32;
+    pointer-events: none;
+  }
+}
+
+a,
+button,
+input[type='text'],
+textarea {
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  color: inherit;
+  line-height: inherit;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: $color-primary;
+}
