@@ -9,7 +9,7 @@ import { logError } from './module/systemModule';
 
 import './App.scss';
 import Translate from './pages/translate/Translate';
-import Loader from './components/loader/Loader';
+import Spinner from './components/spinner/Spinner';
 import Nav from './components/nav/Nav';
 
 function App() {
@@ -23,22 +23,22 @@ function App() {
     });
   }, [auth]);
 
+  if (!isAuthenticated) {
+    return (
+      <div className="app__spinner-container">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <div className="app">
-      {!isAuthenticated ? (
-        <div className="app__loader-container">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          <Nav />
+      <Nav />
 
-          <Routes>
-            <Route path="/translate" element={<Translate />} />
-            <Route path="*" element={<Navigate to="/translate" />} />
-          </Routes>
-        </>
-      )}
+      <Routes>
+        <Route path="/translate" element={<Translate />} />
+        <Route path="*" element={<Navigate to="/translate" />} />
+      </Routes>
 
       <ToastContainer newestOnTop />
     </div>

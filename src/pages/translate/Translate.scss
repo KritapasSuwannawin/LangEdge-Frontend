@@ -4,7 +4,12 @@
 .translate {
   @include page-style;
 
+  &__spinner-container {
+    @include spinner-container;
+  }
+
   &__main {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 4rem;
@@ -15,8 +20,30 @@
       flex-direction: column;
       row-gap: 1.2rem;
 
-      .language-select {
-        font-size: 1.6rem;
+      .language {
+        display: flex;
+        align-items: center;
+        column-gap: 1.2rem;
+        width: fit-content;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        &__text {
+          font-size: 1.6rem;
+        }
+
+        &__icon {
+          width: 1.2rem;
+          transform: scaleY(-1);
+          fill: $color-black;
+          transition: transform 0.15s ease-out;
+
+          &.active {
+            transform: scaleY(1) translateY(1px);
+          }
+        }
       }
 
       .input-container {
@@ -69,11 +96,39 @@
             padding: 0.6rem 1.2rem;
             border-radius: 0.6rem;
             transition: background 0.15s ease-out;
+            min-width: 9rem;
+            text-align: center;
 
             &:hover {
               background: adjust($color: $color-primary, $lightness: -5%);
             }
           }
+        }
+      }
+    }
+
+    &--language-selector {
+      position: absolute;
+      top: calc(3.6rem - 1px);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+      width: calc(100% + 2px);
+      padding: 0.6rem;
+      background: #fff;
+      border: 1px solid $color-outline;
+      transform: translateX(-1px);
+      border-radius: 0.8rem;
+      overflow: auto;
+
+      .item {
+        font-size: 1.4rem;
+        padding: 1.2rem;
+        white-space: nowrap;
+        border-radius: 0.4rem;
+
+        &:hover {
+          background: $color-hover;
+          cursor: pointer;
         }
       }
     }

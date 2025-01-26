@@ -1,18 +1,18 @@
-import './Loader.scss';
+import './Spinner.scss';
 
-interface LoaderProps {
+interface SpinnerProps {
   isLight?: boolean;
   isThin?: boolean;
 }
 
-function Loader(props: LoaderProps) {
+function Spinner(props: SpinnerProps) {
   const { isLight, isThin } = props;
 
   return (
-    <div className="loader">
+    <div className="spinner">
       <span className={`${isLight ? 'light' : ''} ${isThin ? 'thin' : ''}`}></span>
     </div>
   );
 }
 
-export default Loader;
+export default Spinner;
