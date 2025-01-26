@@ -5,6 +5,7 @@ import Language from '../../interface/Language';
 import useFetch from '../../hooks/useFetch';
 
 import { logError } from '../../module/systemModule';
+import { toastInfo } from '../../module/toastModule';
 
 import './Translate.scss';
 import Spinner from '../../components/spinner/Spinner';
@@ -15,19 +16,19 @@ function Translate() {
   const fetch = useFetch();
 
   const [languageArr, setLanguageArr] = useState<Language[]>([]);
-
-  const [inputLanguage, setInputLanguage] = useState<Language | undefined>(undefined);
   const [outputLanguage, setOutputLanguage] = useState<Language | undefined>(undefined);
 
   const [inputText, setInputText] = useState('');
   const [translation, setTranslation] = useState('');
+  const [detectedLanguage, setDetectedLanguage] = useState<string | undefined>(undefined);
 
-  const [isOpenLanguageSelector, setIsOpenLanguageSelector] = useState<false | 'input' | 'output'>(false);
+  const [isOpenLanguageSelector, setIsOpenLanguageSelector] = useState(false);
 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  const inputTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const lastTranslation = useRef<{ text: string; detectedLanguage: string; translation: string } | undefined>(undefined);
 
+  // Load available languages
   useEffect(() => {
     fetch('/api/user/language')
       .then(({ ok, data, message }) => {
@@ -48,47 +49,31 @@ function Translate() {
       });
   }, [fetch]);
 
+  // Set output language to English
   useEffect(() => {
     if (languageArr.length === 0) {
       return;
     }
 
-    if (inputTextareaRef.current) {
-      inputTextareaRef.current.focus();
-    }
+    let outputLanguage = languageArr.find((language) => language.name === 'English');
 
-    let inputLanguage: Language | undefined;
-    let outputLanguage: Language | undefined;
-
-    languageArr.forEach((language) => {
-      switch (language.name) {
-        case 'English':
-          inputLanguage = language;
-          break;
-        case 'Thai':
-          outputLanguage = language;
-          break;
-        default:
-          break;
-      }
-    });
-
-    if (!inputLanguage || !outputLanguage) {
-      inputLanguage = languageArr[0];
+    if (!outputLanguage) {
       outputLanguage = languageArr[1];
     }
 
-    setInputLanguage(inputLanguage);
     setOutputLanguage(outputLanguage);
   }, [languageArr]);
 
+  // Output language change -> Reset translation
   useEffect(() => {
-    setInputText('');
     setTranslation('');
-  }, [inputLanguage, outputLanguage]);
+  }, [outputLanguage]);
 
+  // Input text change -> Reset detected language and translation
   function inputTextChangeHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {
     setInputText(event.target.value);
+
+    setDetectedLanguage(undefined);
     setTranslation('');
   }
 
@@ -96,25 +81,49 @@ function Translate() {
     const trimmedInputText = inputText.trim();
     setInputText(trimmedInputText);
 
-    if (!trimmedInputText || !inputLanguage || !outputLanguage || isTranslating) {
+    if (!trimmedInputText || !outputLanguage || isTranslating) {
       return;
     }
 
+    // Input is the same as the last request -> Use the last result
+    if (lastTranslation.current?.text === trimmedInputText) {
+      setDetectedLanguage(lastTranslation.current.detectedLanguage);
+      setTranslation(lastTranslation.current.translation);
+
+      return;
+    }
+
+    // Reset detected language and translation
+    setDetectedLanguage(undefined);
+    setTranslation('');
+
     setIsTranslating(true);
 
-    const query = `?text=${encodeURIComponent(
-      trimmedInputText
-    )}&inputLanguageId=${inputLanguage.id.toString()}&outputOutputLanguageId=${outputLanguage.id.toString()}`;
+    const query = `?text=${encodeURIComponent(trimmedInputText)}&outputOutputLanguageId=${outputLanguage.id.toString()}`;
 
     fetch(`/api/user/translation${query}`)
-      .then(({ ok, data, message }) => {
+      .then(({ ok, data = {}, message }) => {
         if (!ok) {
-          throw new Error(message);
+          switch (message) {
+            case 'Invalid input':
+              throw new Error('The input text is invalid');
+            case 'Same language':
+              data.originalLanguage = outputLanguage.name;
+              data.translation = trimmedInputText;
+
+              toastInfo(`The input text is already in ${outputLanguage.name}`, 5000);
+              break;
+            default:
+              throw new Error(message);
+          }
         }
 
-        const { translation } = data as { translation: string };
+        const { originalLanguage, translation } = data as { originalLanguage: string; translation: string };
 
+        setDetectedLanguage(originalLanguage);
         setTranslation(translation);
+
+        lastTranslation.current = { text: trimmedInputText, detectedLanguage: originalLanguage, translation };
       })
       .catch((err: unknown) => {
         logError('translate', err);
@@ -124,38 +133,16 @@ function Translate() {
       });
   }
 
-  function inputLanguageClickHandler() {
-    setIsOpenLanguageSelector((prev) => (prev ? false : 'input'));
-  }
-
   function outputLanguageClickHandler() {
-    setIsOpenLanguageSelector((prev) => (prev ? false : 'output'));
+    setIsOpenLanguageSelector((prev) => !prev);
   }
 
   function languageSelectHandler(language: Language) {
-    switch (isOpenLanguageSelector) {
-      case 'input':
-        setInputLanguage(language);
-
-        if (outputLanguage?.id === language.id) {
-          setOutputLanguage(inputLanguage);
-        }
-        break;
-      case 'output':
-        setOutputLanguage(language);
-
-        if (inputLanguage?.id === language.id) {
-          setInputLanguage(outputLanguage);
-        }
-        break;
-      default:
-        break;
-    }
-
+    setOutputLanguage(language);
     setIsOpenLanguageSelector(false);
   }
 
-  if (!inputLanguage || !outputLanguage) {
+  if (!outputLanguage) {
     return (
       <div className="translate__spinner-container">
         <Spinner />
@@ -167,30 +154,27 @@ function Translate() {
     <div className="translate">
       <main className="translate__main">
         <div className="translate__main--left">
-          <div className="language" onClick={inputLanguageClickHandler}>
-            <p className="language__text">{inputLanguage.name}</p>
-            <ChevronIcon className={`language__icon ${isOpenLanguageSelector === 'input' ? 'active' : ''}`} />
+          <div className="language">
+            <p className="language__text">Auto detect {detectedLanguage ? <>&ndash; {detectedLanguage}</> : ''}</p>
           </div>
 
           <div className="input-container">
-            <textarea ref={inputTextareaRef} value={inputText} maxLength={100} onChange={inputTextChangeHandler} />
+            <textarea value={inputText} maxLength={100} onChange={inputTextChangeHandler} autoFocus />
 
             <div className="input-container__bottom">
-              <div className="input-container__bottom--counter">
-                <span>{inputText.length} / 100</span>
-              </div>
+              <span className="input-container__bottom--counter">{inputText.length} / 100</span>
 
-              <div className="input-container__bottom--button">
-                <button onClick={translateButtonClickHandler}>{isTranslating ? <Spinner isThin isLight /> : 'Translate'}</button>
-              </div>
+              <button className="input-container__bottom--button" onClick={translateButtonClickHandler}>
+                {isTranslating ? <Spinner isThin isLight /> : 'Translate'}
+              </button>
             </div>
           </div>
         </div>
 
         <div className="translate__main--right">
-          <div className="language" onClick={outputLanguageClickHandler}>
+          <div className="language clickable" onClick={outputLanguageClickHandler}>
             <p className="language__text">{outputLanguage.name}</p>
-            <ChevronIcon className={`language__icon ${isOpenLanguageSelector === 'output' ? 'active' : ''}`} />
+            <ChevronIcon className={`language__icon ${isOpenLanguageSelector ? 'active' : ''}`} />
           </div>
 
           <div className="input-container">
@@ -201,7 +185,11 @@ function Translate() {
         {isOpenLanguageSelector && (
           <div className="translate__main--language-selector">
             {languageArr.map((language) => (
-              <div key={language.id} className="item" onClick={languageSelectHandler.bind(null, language)}>
+              <div
+                key={language.id}
+                className={`item ${outputLanguage.name === language.name ? 'selected' : ''}`}
+                onClick={languageSelectHandler.bind(null, language)}
+              >
                 <p>{language.name}</p>
               </div>
             ))}

@@ -26,8 +26,10 @@
         column-gap: 1.2rem;
         width: fit-content;
 
-        &:hover {
-          cursor: pointer;
+        &.clickable {
+          &:hover {
+            cursor: pointer;
+          }
         }
 
         &__text {
@@ -125,6 +127,11 @@
         padding: 1.2rem;
         white-space: nowrap;
         border-radius: 0.4rem;
+
+        // &.selected {
+        //   color: rgba($color: $color-black, $alpha: 0.4);
+        //   pointer-events: none;
+        // }
 
         &:hover {
           background: $color-hover;
