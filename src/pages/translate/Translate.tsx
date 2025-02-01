@@ -26,7 +26,9 @@ function Translate() {
 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  const lastTranslation = useRef<{ text: string; detectedLanguage: string; translation: string } | undefined>(undefined);
+  const lastTranslation = useRef<{ text: string; outputLanguageId: number; detectedLanguage: string; translation: string } | undefined>(
+    undefined
+  );
 
   // Load available languages
   useEffect(() => {
@@ -86,7 +88,7 @@ function Translate() {
     }
 
     // Input is the same as the last request -> Use the last result
-    if (lastTranslation.current?.text === trimmedInputText) {
+    if (lastTranslation.current?.text === trimmedInputText && lastTranslation.current.outputLanguageId === outputLanguage.id) {
       setDetectedLanguage(lastTranslation.current.detectedLanguage);
       setTranslation(lastTranslation.current.translation);
 
@@ -99,7 +101,7 @@ function Translate() {
 
     setIsTranslating(true);
 
-    const query = `?text=${encodeURIComponent(trimmedInputText)}&outputOutputLanguageId=${outputLanguage.id.toString()}`;
+    const query = `?text=${encodeURIComponent(trimmedInputText)}&outputLanguageId=${outputLanguage.id.toString()}`;
 
     fetch(`/api/user/translation${query}`)
       .then(({ ok, data = {}, message }) => {
@@ -123,7 +125,12 @@ function Translate() {
         setDetectedLanguage(originalLanguage);
         setTranslation(translation);
 
-        lastTranslation.current = { text: trimmedInputText, detectedLanguage: originalLanguage, translation };
+        lastTranslation.current = {
+          text: trimmedInputText,
+          outputLanguageId: outputLanguage.id,
+          detectedLanguage: originalLanguage,
+          translation,
+        };
       })
       .catch((err: unknown) => {
         logError('translate', err);
