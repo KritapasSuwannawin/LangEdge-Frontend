@@ -25,7 +25,7 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="app__spinner-container">
+      <div className="app-spinner-container">
         <Spinner />
       </div>
     );

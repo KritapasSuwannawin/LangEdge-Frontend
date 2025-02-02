@@ -2,9 +2,9 @@
 @use '../variables/variables' as *;
 
 @mixin page-style {
+  flex: 1;
   width: 100%;
   max-width: 1400px;
-  height: 100%;
   margin: 0 auto;
-  padding: 4rem 4.8rem;
+  padding: $page-vertical-padding $page-horizontal-padding;
 }

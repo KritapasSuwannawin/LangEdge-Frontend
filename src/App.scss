@@ -1,13 +1,9 @@
 @use './scss/main.scss' as *;
 
 .app {
-  height: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
-
-  &__spinner-container {
-    @include spinner-container;
-  }
 
   .Toastify {
     font-size: 1.6rem;

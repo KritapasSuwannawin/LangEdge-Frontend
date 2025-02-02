@@ -208,7 +208,7 @@ function Translate() {
 
   if (!outputLanguage) {
     return (
-      <div className="translate__spinner-container">
+      <div className="page-spinner-container">
         <Spinner />
       </div>
     );
@@ -216,81 +216,61 @@ function Translate() {
 
   return (
     <div className="translate">
-      <main className="translate__main">
-        <div className="translate__main--left">
-          <div className="language">
-            <p className="language__text">Auto detect {originalLanguage ? <>&ndash; {originalLanguage}</> : ''}</p>
-          </div>
-
-          <div className="input-container">
-            <textarea value={inputText} maxLength={400} onChange={inputTextChangeHandler} autoFocus />
-
-            <div className="input-container__bottom">
-              <span className="input-container__bottom--counter">{inputText.length} / 400</span>
-
-              <button className="input-container__bottom--button" onClick={translate.bind(null, inputText, outputLanguage)}>
-                {isTranslating ? <Spinner isThin isLight /> : 'Translate'}
-              </button>
-            </div>
-          </div>
+      <div className="translate__input">
+        <div className="language">
+          <p className="language__text">Auto detect {originalLanguage ? <>&ndash; {originalLanguage}</> : ''}</p>
         </div>
 
-        <div className="translate__main--right">
-          <div className="language clickable" onClick={outputLanguageClickHandler}>
-            <p className="language__text">{outputLanguage.name}</p>
-            <ChevronIcon className={`language__icon ${isOpenLanguageSelector ? 'active' : ''}`} />
-          </div>
+        <div className="input-container">
+          <textarea value={inputText} maxLength={400} onChange={inputTextChangeHandler} autoFocus />
 
-          <div className="input-container">
-            <textarea disabled value={translation} />
+          <div className="input-container__bottom">
+            <span className="input-container__bottom--counter">{inputText.length} / 400</span>
+
+            <button className="input-container__bottom--button" onClick={translate.bind(null, inputText, outputLanguage)}>
+              {isTranslating ? <Spinner isThin isLight /> : 'Translate'}
+            </button>
           </div>
         </div>
+      </div>
 
-        {isOpenLanguageSelector && (
-          <div className="translate__main--language-selector">
-            {languageArr.map((language) => (
-              <div
-                key={language.id}
-                className={`item ${outputLanguage.name === language.name ? 'selected' : ''}`}
-                onClick={languageSelectHandler.bind(null, language)}
-              >
-                <p>{language.name}</p>
-              </div>
+      <div className="translate__translation">
+        <div className="language clickable" onClick={outputLanguageClickHandler}>
+          <p className="language__text">{outputLanguage.name}</p>
+          <ChevronIcon className={`language__icon ${isOpenLanguageSelector ? 'active' : ''}`} />
+        </div>
+
+        <div className="input-container">
+          <textarea disabled value={translation} />
+        </div>
+      </div>
+
+      {inputTextSynonymArr.length > 0 && (
+        <div className="translate__synonym">
+          <h2 className="title">Synonyms</h2>
+
+          <ul className="list-container">
+            {inputTextSynonymArr.map((synonym, index) => (
+              <li key={index} className="item">
+                <button onClick={synonymButtonClickHandler.bind(null, { synonym })}>{synonym}</button>
+              </li>
             ))}
-          </div>
-        )}
-      </main>
+          </ul>
+        </div>
+      )}
 
-      {(inputTextSynonymArr.length > 0 || translationSynonymArr.length > 0) && (
-        <section className="translate__synonym">
-          {inputTextSynonymArr.length > 0 && (
-            <div className="translate__synonym--left">
-              <h2 className="title">Synonyms</h2>
+      {translationSynonymArr.length > 0 && (
+        <div className="translate__more-translation">
+          <h2 className="title">More translations</h2>
 
-              <ul className="list-container">
-                {inputTextSynonymArr.map((synonym, index) => (
-                  <li key={index} className="item">
-                    <button onClick={synonymButtonClickHandler.bind(null, { synonym })}>{synonym}</button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {translationSynonymArr.length > 0 && (
-            <div className="translate__synonym--right">
-              <h2 className="title">More translations</h2>
-
-              <ul className="list-container">
-                {translationSynonymArr.map((synonym, index) => (
-                  <li key={index} className="item">
-                    <button onClick={synonymButtonClickHandler.bind(null, { synonym, isSwapLanguage: true })}>{synonym}</button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </section>
+          <ul className="list-container">
+            {translationSynonymArr.map((synonym, index) => (
+              <li key={index} className="item">
+                <button onClick={synonymButtonClickHandler.bind(null, { synonym, isSwapLanguage: true })}>{synonym}</button>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {exampleSentenceArr.length > 0 && (
@@ -306,6 +286,20 @@ function Translate() {
             ))}
           </ul>
         </section>
+      )}
+
+      {isOpenLanguageSelector && (
+        <div className="translate__language-selector">
+          {languageArr.map((language) => (
+            <div
+              key={language.id}
+              className={`item ${outputLanguage.name === language.name ? 'selected' : ''}`}
+              onClick={languageSelectHandler.bind(null, language)}
+            >
+              <p>{language.name}</p>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
