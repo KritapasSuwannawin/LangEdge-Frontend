@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
-import Language from '../../interface/Language';
+import { Language } from '../../interfaces';
 
 import useFetch from '../../hooks/useFetch';
 
@@ -19,16 +19,33 @@ function Translate() {
   const [outputLanguage, setOutputLanguage] = useState<Language | undefined>(undefined);
 
   const [inputText, setInputText] = useState('');
+  const [originalLanguage, setOriginalLanguage] = useState<string | undefined>(undefined);
+  const [inputTextSynonymArr, setInputTextSynonymArr] = useState<string[]>([]);
   const [translation, setTranslation] = useState('');
-  const [detectedLanguage, setDetectedLanguage] = useState<string | undefined>(undefined);
+  const [translationSynonymArr, setTranslationSynonymArr] = useState<string[]>([]);
 
   const [isOpenLanguageSelector, setIsOpenLanguageSelector] = useState(false);
 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  const lastTranslation = useRef<{ text: string; outputLanguageId: number; detectedLanguage: string; translation: string } | undefined>(
-    undefined
-  );
+  const lastTranslation = useRef<
+    | {
+        inputText: string;
+        outputLanguageId: number;
+        originalLanguage: string;
+        inputTextSynonymArr: string[];
+        translation: string;
+        translationSynonymArr: string[];
+      }
+    | undefined
+  >(undefined);
+
+  const resetOutputState = useCallback(() => {
+    setOriginalLanguage(undefined);
+    setInputTextSynonymArr([]);
+    setTranslation('');
+    setTranslationSynonymArr([]);
+  }, []);
 
   // Load available languages
   useEffect(() => {
@@ -66,17 +83,16 @@ function Translate() {
     setOutputLanguage(outputLanguage);
   }, [languageArr]);
 
-  // Output language change -> Reset translation
+  // Output language change -> Reset all output states
   useEffect(() => {
-    setTranslation('');
-  }, [outputLanguage]);
+    resetOutputState();
+  }, [outputLanguage, resetOutputState]);
 
-  // Input text change -> Reset detected language and translation
+  // Input text change -> Reset all output states
   function inputTextChangeHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {
     setInputText(event.target.value);
 
-    setDetectedLanguage(undefined);
-    setTranslation('');
+    resetOutputState();
   }
 
   function translateButtonClickHandler() {
@@ -88,16 +104,17 @@ function Translate() {
     }
 
     // Input is the same as the last request -> Use the last result
-    if (lastTranslation.current?.text === trimmedInputText && lastTranslation.current.outputLanguageId === outputLanguage.id) {
-      setDetectedLanguage(lastTranslation.current.detectedLanguage);
+    if (lastTranslation.current?.inputText === trimmedInputText && lastTranslation.current.outputLanguageId === outputLanguage.id) {
+      setOriginalLanguage(lastTranslation.current.originalLanguage);
+      setInputTextSynonymArr(lastTranslation.current.inputTextSynonymArr);
       setTranslation(lastTranslation.current.translation);
+      setTranslationSynonymArr(lastTranslation.current.translationSynonymArr);
 
       return;
     }
 
-    // Reset detected language and translation
-    setDetectedLanguage(undefined);
-    setTranslation('');
+    // Reset all output states
+    resetOutputState();
 
     setIsTranslating(true);
 
@@ -120,16 +137,25 @@ function Translate() {
           }
         }
 
-        const { originalLanguage, translation } = data as { originalLanguage: string; translation: string };
+        const { originalLanguage, inputTextSynonymArr, translation, translationSynonymArr } = data as {
+          originalLanguage: string;
+          inputTextSynonymArr: string[];
+          translation: string;
+          translationSynonymArr: string[];
+        };
 
-        setDetectedLanguage(originalLanguage);
+        setOriginalLanguage(originalLanguage);
+        setInputTextSynonymArr(inputTextSynonymArr);
         setTranslation(translation);
+        setTranslationSynonymArr(translationSynonymArr);
 
         lastTranslation.current = {
-          text: trimmedInputText,
+          inputText: trimmedInputText,
           outputLanguageId: outputLanguage.id,
-          detectedLanguage: originalLanguage,
+          originalLanguage,
+          inputTextSynonymArr,
           translation,
+          translationSynonymArr,
         };
       })
       .catch((err: unknown) => {
@@ -162,7 +188,7 @@ function Translate() {
       <main className="translate__main">
         <div className="translate__main--left">
           <div className="language">
-            <p className="language__text">Auto detect {detectedLanguage ? <>&ndash; {detectedLanguage}</> : ''}</p>
+            <p className="language__text">Auto detect {originalLanguage ? <>&ndash; {originalLanguage}</> : ''}</p>
           </div>
 
           <div className="input-container">
@@ -203,6 +229,36 @@ function Translate() {
           </div>
         )}
       </main>
+
+      <section className="translate__synonym">
+        {inputTextSynonymArr.length > 0 && (
+          <div className="translate__synonym--left">
+            <h2 className="title">Synonyms</h2>
+
+            <ul className="list-container">
+              {inputTextSynonymArr.map((synonym, index) => (
+                <li key={index} className="item">
+                  <button>{synonym}</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {translationSynonymArr.length > 0 && (
+          <div className="translate__synonym--right">
+            <h2 className="title">More translations</h2>
+
+            <ul className="list-container">
+              {translationSynonymArr.map((synonym, index) => (
+                <li key={index} className="item">
+                  <button>{synonym}</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

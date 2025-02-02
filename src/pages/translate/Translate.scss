@@ -3,17 +3,24 @@
 
 .translate {
   @include page-style;
+  display: flex;
+  flex-direction: column;
+  row-gap: 4rem;
 
   &__spinner-container {
     @include spinner-container;
   }
 
-  &__main {
+  &__main,
+  &__synonym {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'left right';
     column-gap: 4rem;
+  }
 
+  &__main {
     &--left,
     &--right {
       display: flex;
@@ -68,6 +75,7 @@
           padding: 0 1.2rem;
           margin-top: 1rem;
           scrollbar-width: none;
+          font-family: $font-content;
 
           &::placeholder {
             color: $color-placeholder;
@@ -121,6 +129,7 @@
       transform: translateX(-1px);
       border-radius: 0.8rem;
       overflow: auto;
+      z-index: 1;
 
       .item {
         font-size: 1.4rem;
@@ -136,6 +145,47 @@
         &:hover {
           background: $color-hover;
           cursor: pointer;
+        }
+      }
+    }
+  }
+
+  &__synonym {
+    &--left {
+      grid-area: left;
+    }
+
+    &--right {
+      grid-area: right;
+    }
+
+    &--left,
+    &--right {
+      .title {
+        font-size: 1.8rem;
+        font-weight: 500;
+        margin-bottom: 1.4rem;
+      }
+
+      .list-container {
+        display: flex;
+        column-gap: 1.2rem;
+        row-gap: 1.2rem;
+        flex-wrap: wrap;
+        list-style-type: none;
+
+        .item {
+          font-size: 1.4rem;
+          padding: 0.6rem 1.6rem;
+          background: $color-button;
+          border-radius: 1rem;
+          white-space: nowrap;
+          transition: background 0.15s ease-out;
+          font-family: $font-content;
+
+          &:hover {
+            background: adjust($color: $color-button, $lightness: -3%);
+          }
         }
       }
     }
