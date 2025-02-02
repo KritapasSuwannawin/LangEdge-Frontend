@@ -95,16 +95,21 @@ function Translate() {
     resetOutputState();
   }
 
-  function translateButtonClickHandler() {
+  function translate(inputText: string, outputLanguage: Language) {
     const trimmedInputText = inputText.trim();
     setInputText(trimmedInputText);
+    setOutputLanguage(outputLanguage);
 
-    if (!trimmedInputText || !outputLanguage || isTranslating) {
+    if (!trimmedInputText || isTranslating) {
       return;
     }
 
     // Input is the same as the last request -> Use the last result
-    if (lastTranslation.current?.inputText === trimmedInputText && lastTranslation.current.outputLanguageId === outputLanguage.id) {
+    if (
+      lastTranslation.current &&
+      lastTranslation.current.inputText === trimmedInputText &&
+      lastTranslation.current.outputLanguageId === outputLanguage.id
+    ) {
       setOriginalLanguage(lastTranslation.current.originalLanguage);
       setInputTextSynonymArr(lastTranslation.current.inputTextSynonymArr);
       setTranslation(lastTranslation.current.translation);
@@ -137,11 +142,16 @@ function Translate() {
           }
         }
 
-        const { originalLanguage, inputTextSynonymArr, translation, translationSynonymArr } = data as {
+        const {
+          originalLanguage,
+          inputTextSynonymArr = [],
+          translation,
+          translationSynonymArr = [],
+        } = data as {
           originalLanguage: string;
-          inputTextSynonymArr: string[];
+          inputTextSynonymArr?: string[];
           translation: string;
-          translationSynonymArr: string[];
+          translationSynonymArr?: string[];
         };
 
         setOriginalLanguage(originalLanguage);
@@ -175,6 +185,19 @@ function Translate() {
     setIsOpenLanguageSelector(false);
   }
 
+  function synonymButtonClickHandler(options: { synonym: string; isSwapLanguage?: boolean }) {
+    const { synonym, isSwapLanguage } = options;
+
+    if (!outputLanguage) {
+      return;
+    }
+
+    translate(
+      synonym,
+      isSwapLanguage ? languageArr.find((language) => language.name === originalLanguage) ?? outputLanguage : outputLanguage
+    );
+  }
+
   if (!outputLanguage) {
     return (
       <div className="translate__spinner-container">
@@ -192,12 +215,12 @@ function Translate() {
           </div>
 
           <div className="input-container">
-            <textarea value={inputText} maxLength={100} onChange={inputTextChangeHandler} autoFocus />
+            <textarea value={inputText} maxLength={400} onChange={inputTextChangeHandler} autoFocus />
 
             <div className="input-container__bottom">
-              <span className="input-container__bottom--counter">{inputText.length} / 100</span>
+              <span className="input-container__bottom--counter">{inputText.length} / 400</span>
 
-              <button className="input-container__bottom--button" onClick={translateButtonClickHandler}>
+              <button className="input-container__bottom--button" onClick={translate.bind(null, inputText, outputLanguage)}>
                 {isTranslating ? <Spinner isThin isLight /> : 'Translate'}
               </button>
             </div>
@@ -238,7 +261,7 @@ function Translate() {
             <ul className="list-container">
               {inputTextSynonymArr.map((synonym, index) => (
                 <li key={index} className="item">
-                  <button>{synonym}</button>
+                  <button onClick={synonymButtonClickHandler.bind(null, { synonym })}>{synonym}</button>
                 </li>
               ))}
             </ul>
@@ -252,7 +275,7 @@ function Translate() {
             <ul className="list-container">
               {translationSynonymArr.map((synonym, index) => (
                 <li key={index} className="item">
-                  <button>{synonym}</button>
+                  <button onClick={synonymButtonClickHandler.bind(null, { synonym, isSwapLanguage: true })}>{synonym}</button>
                 </li>
               ))}
             </ul>
