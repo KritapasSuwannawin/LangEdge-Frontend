@@ -23,6 +23,7 @@ function Translate() {
   const [inputTextSynonymArr, setInputTextSynonymArr] = useState<string[]>([]);
   const [translation, setTranslation] = useState('');
   const [translationSynonymArr, setTranslationSynonymArr] = useState<string[]>([]);
+  const [exampleSentenceArr, setExampleSentenceArr] = useState<{ sentence: string; translation: string }[]>([]);
 
   const [isOpenLanguageSelector, setIsOpenLanguageSelector] = useState(false);
 
@@ -36,6 +37,7 @@ function Translate() {
         inputTextSynonymArr: string[];
         translation: string;
         translationSynonymArr: string[];
+        exampleSentenceArr: { sentence: string; translation: string }[];
       }
     | undefined
   >(undefined);
@@ -45,6 +47,7 @@ function Translate() {
     setInputTextSynonymArr([]);
     setTranslation('');
     setTranslationSynonymArr([]);
+    setExampleSentenceArr([]);
   }, []);
 
   // Load available languages
@@ -114,6 +117,7 @@ function Translate() {
       setInputTextSynonymArr(lastTranslation.current.inputTextSynonymArr);
       setTranslation(lastTranslation.current.translation);
       setTranslationSynonymArr(lastTranslation.current.translationSynonymArr);
+      setExampleSentenceArr(lastTranslation.current.exampleSentenceArr);
 
       return;
     }
@@ -147,17 +151,20 @@ function Translate() {
           inputTextSynonymArr = [],
           translation,
           translationSynonymArr = [],
+          exampleSentenceArr = [],
         } = data as {
           originalLanguage: string;
           inputTextSynonymArr?: string[];
           translation: string;
           translationSynonymArr?: string[];
+          exampleSentenceArr?: { sentence: string; translation: string }[];
         };
 
         setOriginalLanguage(originalLanguage);
         setInputTextSynonymArr(inputTextSynonymArr);
         setTranslation(translation);
         setTranslationSynonymArr(translationSynonymArr);
+        setExampleSentenceArr(exampleSentenceArr);
 
         lastTranslation.current = {
           inputText: trimmedInputText,
@@ -166,6 +173,7 @@ function Translate() {
           inputTextSynonymArr,
           translation,
           translationSynonymArr,
+          exampleSentenceArr,
         };
       })
       .catch((err: unknown) => {
@@ -253,35 +261,52 @@ function Translate() {
         )}
       </main>
 
-      <section className="translate__synonym">
-        {inputTextSynonymArr.length > 0 && (
-          <div className="translate__synonym--left">
-            <h2 className="title">Synonyms</h2>
+      {(inputTextSynonymArr.length > 0 || translationSynonymArr.length > 0) && (
+        <section className="translate__synonym">
+          {inputTextSynonymArr.length > 0 && (
+            <div className="translate__synonym--left">
+              <h2 className="title">Synonyms</h2>
 
-            <ul className="list-container">
-              {inputTextSynonymArr.map((synonym, index) => (
-                <li key={index} className="item">
-                  <button onClick={synonymButtonClickHandler.bind(null, { synonym })}>{synonym}</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+              <ul className="list-container">
+                {inputTextSynonymArr.map((synonym, index) => (
+                  <li key={index} className="item">
+                    <button onClick={synonymButtonClickHandler.bind(null, { synonym })}>{synonym}</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-        {translationSynonymArr.length > 0 && (
-          <div className="translate__synonym--right">
-            <h2 className="title">More translations</h2>
+          {translationSynonymArr.length > 0 && (
+            <div className="translate__synonym--right">
+              <h2 className="title">More translations</h2>
 
-            <ul className="list-container">
-              {translationSynonymArr.map((synonym, index) => (
-                <li key={index} className="item">
-                  <button onClick={synonymButtonClickHandler.bind(null, { synonym, isSwapLanguage: true })}>{synonym}</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </section>
+              <ul className="list-container">
+                {translationSynonymArr.map((synonym, index) => (
+                  <li key={index} className="item">
+                    <button onClick={synonymButtonClickHandler.bind(null, { synonym, isSwapLanguage: true })}>{synonym}</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
+
+      {exampleSentenceArr.length > 0 && (
+        <section className="translate__example-sentence">
+          <h2 className="title">Example sentences</h2>
+
+          <ul className="list-container">
+            {exampleSentenceArr.map(({ sentence, translation }, index) => (
+              <li key={index} className="item">
+                <p className="sentence">{sentence}</p>
+                <p className="translation">{translation}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

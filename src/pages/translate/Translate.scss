@@ -1,6 +1,12 @@
 @use 'sass:color';
 @use '../../scss/main.scss' as *;
 
+@mixin section-title-style {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 1.4rem;
+}
+
 .translate {
   @include page-style;
   display: flex;
@@ -162,17 +168,15 @@
     &--left,
     &--right {
       .title {
-        font-size: 1.8rem;
-        font-weight: 500;
-        margin-bottom: 1.4rem;
+        @include section-title-style;
       }
 
       .list-container {
+        list-style-type: none;
         display: flex;
         column-gap: 1.2rem;
         row-gap: 1.2rem;
         flex-wrap: wrap;
-        list-style-type: none;
 
         .item {
           font-size: 1.4rem;
@@ -186,6 +190,32 @@
           &:hover {
             background: adjust($color: $color-button, $lightness: -3%);
           }
+        }
+      }
+    }
+  }
+
+  &__example-sentence {
+    .title {
+      @include section-title-style;
+    }
+
+    .list-container {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      row-gap: 1.2rem;
+
+      .item {
+        font-family: $font-content;
+
+        .sentence {
+          font-size: 1.6rem;
+        }
+
+        .translation {
+          font-size: 1.4rem;
+          color: #4f7396;
         }
       }
     }
