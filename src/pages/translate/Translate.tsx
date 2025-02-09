@@ -9,6 +9,7 @@ import { toastInfo } from '../../module/toastModule';
 
 import './Translate.scss';
 import Spinner from '../../components/spinner/Spinner';
+import LanguageSelector from '../../components/languageSelector/LanguageSelector';
 
 import ChevronIcon from '../../assets/chevron.svg?react';
 
@@ -274,7 +275,7 @@ function Translate() {
       )}
 
       {exampleSentenceArr.length > 0 && (
-        <section className="translate__example-sentence">
+        <div className="translate__example-sentence">
           <h2 className="title">Example sentences</h2>
 
           <ul className="list-container">
@@ -285,22 +286,15 @@ function Translate() {
               </li>
             ))}
           </ul>
-        </section>
-      )}
-
-      {isOpenLanguageSelector && (
-        <div className="translate__language-selector">
-          {languageArr.map((language) => (
-            <div
-              key={language.id}
-              className={`item ${outputLanguage.name === language.name ? 'selected' : ''}`}
-              onClick={languageSelectHandler.bind(null, language)}
-            >
-              <p>{language.name}</p>
-            </div>
-          ))}
         </div>
       )}
+
+      <LanguageSelector
+        isOpen={isOpenLanguageSelector}
+        languageArr={languageArr}
+        selectedLanguage={outputLanguage}
+        languageSelectHandler={languageSelectHandler}
+      ></LanguageSelector>
     </div>
   );
 }
