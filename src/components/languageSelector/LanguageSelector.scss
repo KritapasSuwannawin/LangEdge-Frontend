@@ -2,14 +2,11 @@
 
 .language-selector {
   position: absolute;
-  top: calc($page-vertical-padding + 3.6rem - 1px);
-  width: calc(100% - ($page-horizontal-padding * 2) + 2px);
+  width: 100%;
   background: #fff;
   border: 1px solid $color-outline;
-  transform: translateX(calc($page-horizontal-padding - 1px));
   border-radius: 0.8rem;
-  overflow: auto;
-  z-index: 1;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   font-size: 1.4rem;
@@ -27,6 +24,8 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
     padding: 0.8rem;
+    max-height: 80vh;
+    overflow-y: auto;
 
     &.search-active {
       grid-template-columns: 1fr;

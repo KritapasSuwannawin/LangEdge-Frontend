@@ -4,7 +4,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 4rem;
+  padding: 2rem $page-horizontal-padding;
+
+  @media (max-width: $breakpoint-tablet-vertical) {
+    padding: 2rem $page-horizontal-padding-medium;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 2rem $page-horizontal-padding-small;
+  }
 
   &__logo {
     &--text {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef, ForwardedRef } from 'react';
 import { Language } from '../../interfaces';
 
 import './LanguageSelector.scss';
@@ -10,7 +10,7 @@ interface LanguageSelectorProps {
   languageSelectHandler: (language: Language) => void;
 }
 
-function LanguageSelector(props: LanguageSelectorProps) {
+function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDivElement>) {
   const { isOpen, languageArr, selectedLanguage, languageSelectHandler } = props;
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -24,6 +24,7 @@ function LanguageSelector(props: LanguageSelectorProps) {
     setSearchQuery(e.target.value.trim());
   }
 
+  // Filter languages based on search query & Sort them based on whether they start with the search query
   const filteredLanguages = languageArr
     .filter((language) => language.name.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => {
@@ -46,7 +47,7 @@ function LanguageSelector(props: LanguageSelectorProps) {
   }
 
   return (
-    <div className="language-selector">
+    <div className="language-selector" ref={ref}>
       <input
         ref={searchQueryRef}
         className="language-selector__search-query"
@@ -71,4 +72,4 @@ function LanguageSelector(props: LanguageSelectorProps) {
   );
 }
 
-export default LanguageSelector;
+export default forwardRef(LanguageSelector);

@@ -27,8 +27,10 @@ function Translate() {
   const [exampleSentenceArr, setExampleSentenceArr] = useState<{ sentence: string; translation: string }[]>([]);
 
   const [isOpenLanguageSelector, setIsOpenLanguageSelector] = useState(false);
-
   const [isTranslating, setIsTranslating] = useState(false);
+
+  const outputLanguageButtonRef = useRef<HTMLButtonElement>(null);
+  const languageSelectorRef = useRef<HTMLDivElement>(null);
 
   const lastTranslation = useRef<
     | {
@@ -92,6 +94,30 @@ function Translate() {
     resetOutputState();
   }, [outputLanguage, resetOutputState]);
 
+  // Click outside language selector -> Close language selector
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const outputLanguageButton = outputLanguageButtonRef.current;
+      const languageSelector = languageSelectorRef.current;
+
+      if (!outputLanguageButton || !languageSelector) {
+        return;
+      }
+
+      const clickedElement = event.target as Node;
+
+      if (!languageSelectorRef.current.contains(clickedElement) && !outputLanguageButtonRef.current.contains(clickedElement)) {
+        setIsOpenLanguageSelector(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [languageSelectorRef]);
+
   // Input text change -> Reset all output states
   function inputTextChangeHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {
     setInputText(event.target.value);
@@ -99,6 +125,7 @@ function Translate() {
     resetOutputState();
   }
 
+  // Main translation function
   function translate(inputText: string, outputLanguage: Language) {
     const trimmedInputText = inputText.trim();
     setInputText(trimmedInputText);
@@ -185,15 +212,18 @@ function Translate() {
       });
   }
 
-  function outputLanguageClickHandler() {
+  // Output language button clicked -> Toggle language selector
+  function outputLanguageButtonClickHandler() {
     setIsOpenLanguageSelector((prev) => !prev);
   }
 
+  // Output language selected -> Close language selector
   function languageSelectHandler(language: Language) {
     setOutputLanguage(language);
     setIsOpenLanguageSelector(false);
   }
 
+  // Synonym clicked -> Translate synonym
   function synonymButtonClickHandler(options: { synonym: string; isSwapLanguage?: boolean }) {
     const { synonym, isSwapLanguage } = options;
 
@@ -217,34 +247,44 @@ function Translate() {
 
   return (
     <div className="translate">
-      <div className="translate__input">
-        <div className="language">
-          <p className="language__text">Auto detect {originalLanguage ? <>&ndash; {originalLanguage}</> : ''}</p>
-        </div>
+      <main className="translate__main">
+        <div className="translate__main--input">
+          <div className="language">
+            <p className="language__text">Auto detect {originalLanguage ? <>&ndash; {originalLanguage}</> : ''}</p>
+          </div>
 
-        <div className="input-container">
-          <textarea value={inputText} maxLength={400} onChange={inputTextChangeHandler} autoFocus />
+          <div className="input-container">
+            <textarea value={inputText} maxLength={400} onChange={inputTextChangeHandler} autoFocus />
 
-          <div className="input-container__bottom">
-            <span className="input-container__bottom--counter">{inputText.length} / 400</span>
+            <div className="input-container__bottom">
+              <span className="input-container__bottom--counter">{inputText.length} / 400</span>
 
-            <button className="input-container__bottom--button" onClick={translate.bind(null, inputText, outputLanguage)}>
-              {isTranslating ? <Spinner isThin isLight /> : 'Translate'}
-            </button>
+              <button className="input-container__bottom--button" onClick={translate.bind(null, inputText, outputLanguage)}>
+                {isTranslating ? <Spinner isThin isLight /> : 'Translate'}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="translate__translation">
-        <div className="language clickable" onClick={outputLanguageClickHandler}>
-          <p className="language__text">{outputLanguage.name}</p>
-          <ChevronIcon className={`language__icon ${isOpenLanguageSelector ? 'active' : ''}`} />
+        <div className="translate__main--translation">
+          <button ref={outputLanguageButtonRef} className="language clickable" onClick={outputLanguageButtonClickHandler}>
+            <p className="language__text">{outputLanguage.name}</p>
+            <ChevronIcon className={`language__icon ${isOpenLanguageSelector ? 'active' : ''}`} />
+          </button>
+
+          <div className="input-container">
+            <textarea disabled value={translation} />
+          </div>
         </div>
 
-        <div className="input-container">
-          <textarea disabled value={translation} />
-        </div>
-      </div>
+        <LanguageSelector
+          ref={languageSelectorRef}
+          isOpen={isOpenLanguageSelector}
+          languageArr={languageArr}
+          selectedLanguage={outputLanguage}
+          languageSelectHandler={languageSelectHandler}
+        ></LanguageSelector>
+      </main>
 
       {inputTextSynonymArr.length > 0 && (
         <div className="translate__synonym">
@@ -288,13 +328,6 @@ function Translate() {
           </ul>
         </div>
       )}
-
-      <LanguageSelector
-        isOpen={isOpenLanguageSelector}
-        languageArr={languageArr}
-        selectedLanguage={outputLanguage}
-        languageSelectHandler={languageSelectHandler}
-      ></LanguageSelector>
     </div>
   );
 }
