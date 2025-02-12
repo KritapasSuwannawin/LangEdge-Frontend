@@ -5,7 +5,7 @@ import { useAppDispatch } from './useRedux';
 
 import { settingActions } from '../store';
 
-import { setCookie } from '../module/browserModule';
+import { setCookie } from '../utilities/browserUtility';
 
 const useAuth = () => {
   const fetch = useFetch();

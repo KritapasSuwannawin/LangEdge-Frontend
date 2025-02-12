@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { getCookie } from '../module/browserModule';
+import { getCookie } from '../utilities/browserUtility';
 
 const useFetch = () => {
   return useCallback(

@@ -4,8 +4,8 @@ import { Language } from '../../interfaces';
 
 import useFetch from '../../hooks/useFetch';
 
-import { logError } from '../../module/systemModule';
-import { toastInfo } from '../../module/toastModule';
+import { logError } from '../../utilities/systemUtility';
+import { toastInfo } from '../../utilities/toastUtility';
 
 import './Translate.scss';
 import Spinner from '../../components/spinner/Spinner';

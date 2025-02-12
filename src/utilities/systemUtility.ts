@@ -1,4 +1,4 @@
-import { toastError } from '../module/toastModule';
+import { toastError } from './toastUtility';
 
 export const logError = (location: string, err: unknown, toastMessage: string | null = 'An error has occurred'): void => {
   const errorMessage = err instanceof Error ? err.message : 'Unknown error';

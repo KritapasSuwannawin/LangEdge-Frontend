@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import { useAppSelector } from './hooks/useRedux';
 import useAuth from './hooks/useAuth';
 
-import { logError } from './module/systemModule';
+import { logError } from './utilities/systemUtility';
 
 import './App.scss';
 import Translate from './pages/translate/Translate';
