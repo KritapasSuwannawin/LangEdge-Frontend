@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import zod from 'zod';
 
 import { Language } from '../../interfaces';
 
@@ -20,7 +21,7 @@ function Translate() {
   const [outputLanguage, setOutputLanguage] = useState<Language | undefined>(undefined);
 
   const [inputText, setInputText] = useState('');
-  const [originalLanguage, setOriginalLanguage] = useState<string | undefined>(undefined);
+  const [originalLanguageName, setOriginalLanguageName] = useState<string | undefined>(undefined);
   const [inputTextSynonymArr, setInputTextSynonymArr] = useState<string[]>([]);
   const [translation, setTranslation] = useState('');
   const [translationSynonymArr, setTranslationSynonymArr] = useState<string[]>([]);
@@ -36,7 +37,7 @@ function Translate() {
     | {
         inputText: string;
         outputLanguageId: number;
-        originalLanguage: string;
+        originalLanguageName: string;
         inputTextSynonymArr: string[];
         translation: string;
         translationSynonymArr: string[];
@@ -46,7 +47,7 @@ function Translate() {
   >(undefined);
 
   const resetOutputState = useCallback(() => {
-    setOriginalLanguage(undefined);
+    setOriginalLanguageName(undefined);
     setInputTextSynonymArr([]);
     setTranslation('');
     setTranslationSynonymArr([]);
@@ -61,7 +62,23 @@ function Translate() {
           throw new Error(message);
         }
 
-        const { languageArr } = data as { languageArr: Language[] };
+        const dataSchema = zod.object({
+          languageArr: zod.array(
+            zod.object({
+              id: zod.number(),
+              name: zod.string(),
+              code: zod.string(),
+            })
+          ),
+        });
+
+        const { success, data: parseData } = dataSchema.safeParse(data);
+
+        if (!success) {
+          throw new Error('Invalid data format');
+        }
+
+        const { languageArr } = parseData;
 
         if (languageArr.length === 0) {
           throw new Error('No language available');
@@ -141,7 +158,7 @@ function Translate() {
       lastTranslation.current.inputText === trimmedInputText &&
       lastTranslation.current.outputLanguageId === outputLanguage.id
     ) {
-      setOriginalLanguage(lastTranslation.current.originalLanguage);
+      setOriginalLanguageName(lastTranslation.current.originalLanguageName);
       setInputTextSynonymArr(lastTranslation.current.inputTextSynonymArr);
       setTranslation(lastTranslation.current.translation);
       setTranslationSynonymArr(lastTranslation.current.translationSynonymArr);
@@ -164,7 +181,7 @@ function Translate() {
             case 'Invalid input':
               throw new Error('The input text is invalid');
             case 'Same language':
-              data.originalLanguage = outputLanguage.name;
+              data.originalLanguageName = outputLanguage.name;
               data.translation = trimmedInputText;
 
               toastInfo(`The input text is already in ${outputLanguage.name}`, 5000);
@@ -174,21 +191,36 @@ function Translate() {
           }
         }
 
+        const dataSchema = zod.object({
+          originalLanguageName: zod.string(),
+          inputTextSynonymArr: zod.array(zod.string()).optional(),
+          translation: zod.string(),
+          translationSynonymArr: zod.array(zod.string()).optional(),
+          exampleSentenceArr: zod
+            .array(
+              zod.object({
+                sentence: zod.string(),
+                translation: zod.string(),
+              })
+            )
+            .optional(),
+        });
+
+        const { success, data: parseData } = dataSchema.safeParse(data);
+
+        if (!success) {
+          throw new Error('Invalid data format');
+        }
+
         const {
-          originalLanguage,
+          originalLanguageName,
           inputTextSynonymArr = [],
           translation,
           translationSynonymArr = [],
           exampleSentenceArr = [],
-        } = data as {
-          originalLanguage: string;
-          inputTextSynonymArr?: string[];
-          translation: string;
-          translationSynonymArr?: string[];
-          exampleSentenceArr?: { sentence: string; translation: string }[];
-        };
+        } = parseData;
 
-        setOriginalLanguage(originalLanguage);
+        setOriginalLanguageName(originalLanguageName);
         setInputTextSynonymArr(inputTextSynonymArr);
         setTranslation(translation);
         setTranslationSynonymArr(translationSynonymArr);
@@ -197,7 +229,7 @@ function Translate() {
         lastTranslation.current = {
           inputText: trimmedInputText,
           outputLanguageId: outputLanguage.id,
-          originalLanguage,
+          originalLanguageName,
           inputTextSynonymArr,
           translation,
           translationSynonymArr,
@@ -233,7 +265,7 @@ function Translate() {
 
     translate(
       synonym,
-      isSwapLanguage ? languageArr.find((language) => language.name === originalLanguage) ?? outputLanguage : outputLanguage
+      isSwapLanguage ? languageArr.find((language) => language.name === originalLanguageName) ?? outputLanguage : outputLanguage
     );
   }
 
@@ -250,7 +282,7 @@ function Translate() {
       <main className="translate__main">
         <div className="translate__main--input">
           <div className="language">
-            <p className="language__text">Auto detect {originalLanguage ? <>&ndash; {originalLanguage}</> : ''}</p>
+            <p className="language__text">Auto detect {originalLanguageName ? <>&ndash; {originalLanguageName}</> : ''}</p>
           </div>
 
           <div className="input-container">
