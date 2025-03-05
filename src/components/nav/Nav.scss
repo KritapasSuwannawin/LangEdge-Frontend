@@ -5,6 +5,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 2rem $page-horizontal-padding;
+  min-height: 8rem;
 
   @media (max-width: $breakpoint-tablet-vertical) {
     padding: 2rem $page-horizontal-padding-medium;

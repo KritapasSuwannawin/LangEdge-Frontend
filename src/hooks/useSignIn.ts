@@ -8,42 +8,61 @@ import useFetch from './useFetch';
 
 import { userActions } from '../store';
 
-import { setToken } from '../utilities/browserUtility';
+import { setToken, getToken } from '../utilities/browserUtility';
 
 const useSignIn = () => {
   const dispatch = useAppDispatch();
   const fetch = useFetch();
 
-  return useCallback(async () => {
-    const { user } = await googleSignIn();
+  return useCallback(
+    async (options: { isAutoSignIn?: boolean } = {}) => {
+      const { isAutoSignIn = false } = options;
 
-    const accessToken = await user.getIdToken();
-    const { refreshToken } = user;
+      let accessToken: string, refreshToken: string;
 
-    const { ok, data, message } = await fetch('/api/user/sign-in', 'POST', { accessToken });
+      if (isAutoSignIn) {
+        const storedAccessToken = getToken('accessToken');
+        const storedRefreshToken = getToken('refreshToken');
 
-    if (!ok) {
-      throw new Error(message);
-    }
+        if (!storedAccessToken || !storedRefreshToken) {
+          throw new Error('No stored tokens');
+        }
 
-    const dataSchema = zod.object({
-      userId: zod.string(),
-      email: zod.string(),
-      name: zod.string(),
-      pictureUrl: zod.string().optional(),
-    });
+        accessToken = storedAccessToken;
+        refreshToken = storedRefreshToken;
+      } else {
+        const { user } = await googleSignIn();
 
-    const { success, data: userData } = dataSchema.safeParse(data);
+        accessToken = await user.getIdToken();
+        refreshToken = user.refreshToken;
+      }
 
-    if (!success) {
-      throw new Error('Invalid data format');
-    }
+      const { ok, data, message } = await fetch('/api/user/sign-in', 'POST', { accessToken });
 
-    dispatch(userActions.setUser(userData));
+      if (!ok) {
+        throw new Error(message);
+      }
 
-    setToken('accessToken', accessToken);
-    setToken('refreshToken', refreshToken);
-  }, [dispatch, fetch]);
+      const dataSchema = zod.object({
+        userId: zod.string(),
+        email: zod.string(),
+        name: zod.string(),
+        pictureUrl: zod.string().optional(),
+      });
+
+      const { success, data: userData } = dataSchema.safeParse(data);
+
+      if (!success) {
+        throw new Error('Invalid data format');
+      }
+
+      dispatch(userActions.setUser(userData));
+
+      setToken('accessToken', accessToken);
+      setToken('refreshToken', refreshToken);
+    },
+    [dispatch, fetch]
+  );
 };
 
 export default useSignIn;
