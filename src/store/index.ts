@@ -1,13 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-
-import settingSlice from './settingSlice';
+import userSlice from './userSlice';
 
 const store = configureStore({
-  reducer: { setting: settingSlice.reducer },
+  reducer: { user: userSlice.reducer },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export default store;
-export const settingActions = settingSlice.actions;
+export const userActions = userSlice.actions;

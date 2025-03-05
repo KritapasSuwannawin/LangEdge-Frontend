@@ -4,6 +4,8 @@ import zod from 'zod';
 import { Language } from '../../interfaces';
 
 import useFetch from '../../hooks/useFetch';
+import { useAppSelector } from '../../hooks/useRedux';
+import useSignIn from '../../hooks/useSignIn';
 
 import { logError } from '../../utilities/systemUtility';
 import { toastInfo } from '../../utilities/toastUtility';
@@ -16,6 +18,9 @@ import ChevronIcon from '../../assets/chevron.svg?react';
 
 function Translate() {
   const fetch = useFetch();
+  const signIn = useSignIn();
+
+  const userId = useAppSelector((state) => state.user.userId);
 
   const [languageArr, setLanguageArr] = useState<Language[]>([]);
   const [outputLanguage, setOutputLanguage] = useState<Language | undefined>(undefined);
@@ -29,6 +34,7 @@ function Translate() {
 
   const [isOpenLanguageSelector, setIsOpenLanguageSelector] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   const outputLanguageButtonRef = useRef<HTMLButtonElement>(null);
   const languageSelectorRef = useRef<HTMLDivElement>(null);
@@ -45,6 +51,8 @@ function Translate() {
       }
     | undefined
   >(undefined);
+
+  const isDoneInitializing = languageArr.length > 0 && outputLanguage;
 
   const resetOutputState = useCallback(() => {
     setOriginalLanguageName(undefined);
@@ -269,7 +277,21 @@ function Translate() {
     );
   }
 
-  if (!outputLanguage) {
+  function signInClickHandler() {
+    void (async () => {
+      try {
+        setIsSigningIn(true);
+
+        await signIn();
+      } catch (err) {
+        logError('signInClickHandler', err, 'Failed to sign in');
+      } finally {
+        setIsSigningIn(false);
+      }
+    })();
+  }
+
+  if (!isDoneInitializing) {
     return (
       <div className="page-spinner-container">
         <Spinner />
@@ -291,9 +313,15 @@ function Translate() {
             <div className="input-container__bottom">
               <span className="input-container__bottom--counter">{inputText.length} / 400</span>
 
-              <button className="input-container__bottom--button" onClick={translate.bind(null, inputText, outputLanguage)}>
-                {isTranslating ? <Spinner isThin isLight /> : 'Translate'}
-              </button>
+              {userId ? (
+                <button className="input-container__bottom--button" onClick={translate.bind(null, inputText, outputLanguage)}>
+                  {isTranslating ? <Spinner isThin /> : 'Translate'}
+                </button>
+              ) : (
+                <button className="input-container__bottom--button unauthenticated" onClick={signInClickHandler}>
+                  {isSigningIn ? <Spinner isThin /> : 'Sign in'}
+                </button>
+              )}
             </div>
           </div>
         </div>

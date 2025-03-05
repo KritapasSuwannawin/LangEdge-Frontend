@@ -130,18 +130,20 @@
           }
 
           &--button {
-            background: $color-primary;
-            color: $color-white;
-            font-size: 1.4rem;
-            font-weight: 500;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.6rem;
-            transition: background 0.15s ease-out;
-            min-width: 9rem;
-            text-align: center;
+            @include button(
+              $font-weight: 500,
+              $padding: 0.6rem 1.2rem,
+              $border-radius: 0.6rem,
+              $background: $color-primary,
+              $color: $color-white,
+              $lightness: -5%
+            );
 
-            &:hover {
-              background: adjust($color: $color-primary, $lightness: -5%);
+            min-width: 9rem;
+
+            &.unauthenticated {
+              @include button-secondary($font-weight: 500, $padding: 0.4rem 1.4rem, $border-radius: 0.8rem);
+              min-width: 7.4rem;
             }
           }
         }
@@ -171,17 +173,7 @@
       flex-wrap: wrap;
 
       .item {
-        font-size: 1.4rem;
-        padding: 0.6rem 1.6rem;
-        background: $color-button;
-        border-radius: 1rem;
-        white-space: nowrap;
-        transition: background 0.15s ease-out;
-        font-family: $font-content;
-
-        &:hover {
-          background: adjust($color: $color-button, $lightness: -3%);
-        }
+        @include button($font-family: $font-content);
       }
     }
   }
