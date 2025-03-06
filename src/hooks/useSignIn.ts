@@ -8,7 +8,7 @@ import useFetch from './useFetch';
 
 import { userActions } from '../store';
 
-import { setToken, getToken } from '../utilities/browserUtility';
+import { getToken } from '../utilities/browserUtility';
 
 const useSignIn = () => {
   const dispatch = useAppDispatch();
@@ -37,7 +37,7 @@ const useSignIn = () => {
         refreshToken = user.refreshToken;
       }
 
-      const { ok, data, message } = await fetch('/api/user/sign-in', 'POST', { accessToken });
+      const { ok, data, message } = await fetch('/api/user/sign-in', 'POST', { accessToken, refreshToken });
 
       if (!ok) {
         throw new Error(message);
@@ -57,9 +57,6 @@ const useSignIn = () => {
       }
 
       dispatch(userActions.setUser(userData));
-
-      setToken('accessToken', accessToken);
-      setToken('refreshToken', refreshToken);
     },
     [dispatch, fetch]
   );
