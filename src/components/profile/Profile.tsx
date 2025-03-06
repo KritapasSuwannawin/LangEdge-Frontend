@@ -1,20 +1,18 @@
 import { useState, useRef } from 'react';
 import { Transition } from 'react-transition-group';
 
-import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
+import { useAppSelector } from '../../hooks/useRedux';
 import useClickOutsideHandler from '../../hooks/useClickOutsideHandler';
-
-import { userActions } from '../../store';
+import useSignOut from '../../hooks/useSignOut';
 
 import { fadingStyle } from '../../utilities/transitionUtility';
-import { eraseToken } from '../../utilities/browserUtility';
 
 import './Profile.scss';
 
 import SignOutIcon from '../../assets/signOut.svg?react';
 
 function Profile() {
-  const dispatch = useAppDispatch();
+  const signOut = useSignOut();
 
   const pictureUrl = useAppSelector((state) => state.user.pictureUrl);
   const name = useAppSelector((state) => state.user.name);
@@ -32,11 +30,7 @@ function Profile() {
   }
 
   function signoutHandler() {
-    eraseToken('accessToken');
-    eraseToken('refreshToken');
-
-    dispatch(userActions.clearUser());
-
+    signOut();
     setIsProfileDetailsOpen(false);
   }
 

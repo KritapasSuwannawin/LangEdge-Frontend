@@ -171,18 +171,25 @@ function Translate() {
     fetch(`/api/user/translation${query}`)
       .then(({ ok, data = {}, message }) => {
         if (!ok) {
+          let errorMessage: string | null;
+
           switch (message) {
             case 'Invalid input':
-              throw new Error('The input text is invalid');
-            case 'Same language':
-              data.originalLanguageName = outputLanguage.name;
-              data.translation = trimmedInputText;
-
-              toastInfo(`The input text is already in ${outputLanguage.name}`, 5000);
+              errorMessage = 'The input text is invalid';
+              break;
+            case 'Unauthorized':
+              errorMessage = 'Your session has expired, please sign in again.';
+              break;
+            case 'Too many requests':
+              errorMessage = 'You have reached the limit, please try again later.';
               break;
             default:
-              throw new Error(message);
+              errorMessage = null;
+              break;
           }
+
+          logError('translate', new Error(message), errorMessage);
+          return;
         }
 
         const dataSchema = zod.object({
@@ -229,6 +236,11 @@ function Translate() {
           translationSynonymArr,
           exampleSentenceArr,
         };
+
+        // Same language
+        if (originalLanguageName.toLowerCase() === outputLanguage.name.toLowerCase()) {
+          toastInfo(`The input text is already in ${outputLanguage.name}`);
+        }
       })
       .catch((err: unknown) => {
         logError('translate', err);

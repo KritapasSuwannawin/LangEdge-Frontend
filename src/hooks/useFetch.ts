@@ -1,15 +1,13 @@
 import { useCallback } from 'react';
 import zod from 'zod';
 
-import { useAppDispatch } from './useRedux';
+import useSignOut from './useSignOut';
 
-import { userActions } from '../store';
-
-import { getToken, eraseToken, setToken } from '../utilities/browserUtility';
+import { getToken, setToken } from '../utilities/browserUtility';
 import { logError } from '../utilities/systemUtility';
 
 const useFetch = () => {
-  const dispatch = useAppDispatch();
+  const signOut = useSignOut();
 
   const refreshAccessToken = useCallback(async (refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_URL as string}/api/auth/token/refresh`, {
@@ -73,16 +71,12 @@ const useFetch = () => {
           }
         }
 
-        // Clear access token
-        eraseToken('accessToken');
-        eraseToken('refreshToken');
-
-        // Log out user
-        dispatch(userActions.clearUser());
-
-        // Reload page
-        window.location.reload();
+        signOut();
         return { ok: false, message: 'Unauthorized' };
+      }
+
+      if (status === 429) {
+        return { ok: false, message: 'Too many requests' };
       }
 
       const { data, message } = (await res.json()) as { data?: Record<string, unknown>; message?: string };
@@ -94,7 +88,7 @@ const useFetch = () => {
 
       return { ok, data, message: message ?? (!ok ? 'Unknown error' : 'Success') };
     },
-    [refreshAccessToken, dispatch]
+    [refreshAccessToken, signOut]
   );
 
   return callback;
