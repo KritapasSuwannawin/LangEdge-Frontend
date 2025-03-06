@@ -2,6 +2,7 @@ import { useAppSelector } from '../../hooks/useRedux';
 
 import './Nav.scss';
 import SignInButton from '../buttons/signInButton/SignInButton';
+import Profile from '../profile/Profile';
 
 function Nav() {
   const userId = useAppSelector((state) => state.user.userId);
@@ -12,7 +13,7 @@ function Nav() {
         <h1 className="nav__logo--text">LangEdge AI</h1>
       </div>
 
-      <div className="nav__page-links">{!userId && <SignInButton></SignInButton>}</div>
+      <div className="nav__page-links">{!userId ? <SignInButton></SignInButton> : <Profile></Profile>}</div>
     </nav>
   );
 }

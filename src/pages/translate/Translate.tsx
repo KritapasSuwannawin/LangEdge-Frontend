@@ -6,6 +6,7 @@ import { Language } from '../../interfaces';
 import useFetch from '../../hooks/useFetch';
 import { useAppSelector } from '../../hooks/useRedux';
 import useSignIn from '../../hooks/useSignIn';
+import useClickOutsideHandler from '../../hooks/useClickOutsideHandler';
 
 import { logError } from '../../utilities/systemUtility';
 import { toastInfo } from '../../utilities/toastUtility';
@@ -38,6 +39,8 @@ function Translate() {
 
   const outputLanguageButtonRef = useRef<HTMLButtonElement>(null);
   const languageSelectorRef = useRef<HTMLDivElement>(null);
+
+  useClickOutsideHandler(isOpenLanguageSelector, setIsOpenLanguageSelector, [outputLanguageButtonRef, languageSelectorRef]);
 
   const lastTranslation = useRef<
     | {
@@ -119,29 +122,12 @@ function Translate() {
     resetOutputState();
   }, [outputLanguage, resetOutputState]);
 
-  // Click outside language selector -> Close language selector
+  // Sign out -> Reset all output states
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      const outputLanguageButton = outputLanguageButtonRef.current;
-      const languageSelector = languageSelectorRef.current;
-
-      if (!outputLanguageButton || !languageSelector) {
-        return;
-      }
-
-      const clickedElement = event.target as Node;
-
-      if (!languageSelectorRef.current.contains(clickedElement) && !outputLanguageButtonRef.current.contains(clickedElement)) {
-        setIsOpenLanguageSelector(false);
-      }
+    if (!userId) {
+      resetOutputState();
     }
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [languageSelectorRef]);
+  }, [userId, resetOutputState]);
 
   // Input text change -> Reset all output states
   function inputTextChangeHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {

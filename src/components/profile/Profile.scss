@@ -1,0 +1,79 @@
+@use '../../scss/main.scss' as *;
+
+.profile {
+  position: relative;
+
+  &__picture {
+    display: block;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: transparent solid 3px;
+    transition: border-color 0.25s ease-out;
+
+    &:hover {
+      cursor: pointer;
+      border-color: $color-outline;
+    }
+  }
+
+  &__details {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 1rem);
+    background: adjust($color: $color-button, $lightness: 3%);
+    border-radius: 0.8rem;
+    z-index: 1;
+    box-shadow: 0 0.2rem 0.8rem rgba($color: $color-black, $alpha: 0.1);
+
+    &--personal-info {
+      display: flex;
+      align-items: center;
+      column-gap: 1.6rem;
+      padding: 1.4rem 1.6rem 1rem;
+
+      .left {
+        .picture {
+          width: 5.6rem;
+          height: 5.6rem;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+      }
+
+      .right {
+        white-space: nowrap;
+
+        .name {
+          font-size: 1.6rem;
+          font-weight: 500;
+        }
+
+        .email {
+          font-size: 1.4rem;
+          color: $color-placeholder;
+        }
+      }
+    }
+  }
+
+  &__sign-out-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    font-size: 1.4rem;
+    padding: 1.4rem 1.6rem;
+
+    svg {
+      width: 1.8rem;
+      height: 1.8rem;
+      margin-right: 1.6rem;
+      fill: $color-black;
+    }
+
+    &:hover {
+      background: $color-button;
+    }
+  }
+}
