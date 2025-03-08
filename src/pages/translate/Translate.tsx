@@ -72,7 +72,7 @@ function Translate() {
 
   // Load available languages
   useEffect(() => {
-    fetch('/api/user/language')
+    fetch('/api/language')
       .then(({ ok, data, message }) => {
         if (!ok) {
           throw new Error(message);
@@ -192,7 +192,7 @@ function Translate() {
 
     const query = `?text=${encodeURIComponent(trimmedInputText)}&outputLanguageId=${outputLanguage.id.toString()}`;
 
-    fetch(`/api/user/translation${query}`)
+    fetch(`/api/translation${query}`)
       .then(({ ok, data = {}, message }) => {
         if (!ok) {
           let errorMessage: string | null;
