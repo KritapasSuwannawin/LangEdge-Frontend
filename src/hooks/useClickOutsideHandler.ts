@@ -1,14 +1,12 @@
 import { useEffect, RefObject } from 'react';
 
-import { SetState } from '../types';
-
-const useClickOutsideHandler = (state: boolean, setState: SetState<boolean>, elementRefArr: RefObject<Element>[]) => {
+const useClickOutsideHandler = (state: boolean, clickOutsideHandler: () => void, elementRefArr: RefObject<Element>[]) => {
   useEffect(() => {
     if (!state) {
       return;
     }
 
-    function clickOutsideHandler(event: MouseEvent) {
+    function clickHandler(event: MouseEvent) {
       const clickedElement = event.target as HTMLElement;
 
       function isToastifyClicked() {
@@ -26,18 +24,18 @@ const useClickOutsideHandler = (state: boolean, setState: SetState<boolean>, ele
       }
 
       if (elementRefArr.every((elementRef) => !elementRef.current?.contains(clickedElement)) && !isToastifyClicked()) {
-        setState(false);
+        clickOutsideHandler();
       }
     }
 
-    document.addEventListener('mousedown', clickOutsideHandler);
+    document.addEventListener('mousedown', clickHandler);
 
     return () => {
       setTimeout(() => {
-        document.removeEventListener('mousedown', clickOutsideHandler);
+        document.removeEventListener('mousedown', clickHandler);
       }, 0);
     };
-  }, [state, setState, elementRefArr]);
+  }, [state, clickOutsideHandler, elementRefArr]);
 };
 
 export default useClickOutsideHandler;

@@ -3,20 +3,25 @@ import { Language } from '../../interfaces';
 
 import './LanguageSelector.scss';
 
+import ArrowIcon from '../../assets/arrow.svg?react';
+
 interface LanguageSelectorProps {
   isOpen: boolean;
   languageArr: Language[];
   selectedLanguage: Language;
   languageSelectHandler: (language: Language) => void;
+  backButtonClickedHandler: () => void;
 }
 
 function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDivElement>) {
-  const { isOpen, languageArr, selectedLanguage, languageSelectHandler } = props;
+  const { isOpen, languageArr, selectedLanguage, languageSelectHandler, backButtonClickedHandler } = props;
   const [searchQuery, setSearchQuery] = useState('');
 
   const searchQueryRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    setSearchQuery('');
+
     searchQueryRef.current?.focus();
   }, [isOpen]);
 
@@ -48,14 +53,13 @@ function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDi
 
   return (
     <div className="language-selector" ref={ref}>
-      <input
-        ref={searchQueryRef}
-        className="language-selector__search-query"
-        type="text"
-        placeholder="Search languages"
-        value={searchQuery}
-        onChange={searchQueryChangeHandler}
-      />
+      <div className="language-selector__search-container">
+        <button onClick={backButtonClickedHandler}>
+          <ArrowIcon></ArrowIcon>
+        </button>
+
+        <input ref={searchQueryRef} type="text" placeholder="Search languages" value={searchQuery} onChange={searchQueryChangeHandler} />
+      </div>
 
       <div className={`language-selector__item-container ${searchQuery.length > 0 ? 'search-active' : ''}`}>
         {filteredLanguages.map((language) => (

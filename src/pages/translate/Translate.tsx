@@ -40,8 +40,6 @@ function Translate() {
   const outputLanguageButtonRef = useRef<HTMLButtonElement>(null);
   const languageSelectorRef = useRef<HTMLDivElement>(null);
 
-  useClickOutsideHandler(isOpenLanguageSelector, setIsOpenLanguageSelector, [outputLanguageButtonRef, languageSelectorRef]);
-
   const lastTranslation = useRef<
     | {
         inputText: string;
@@ -64,6 +62,12 @@ function Translate() {
     setTranslationSynonymArr([]);
     setExampleSentenceArr([]);
   }, []);
+
+  const closeLanguageSelector = useCallback(() => {
+    setIsOpenLanguageSelector(false);
+  }, []);
+
+  useClickOutsideHandler(isOpenLanguageSelector, closeLanguageSelector, [outputLanguageButtonRef, languageSelectorRef]);
 
   // Load available languages
   useEffect(() => {
@@ -341,6 +345,7 @@ function Translate() {
           languageArr={languageArr}
           selectedLanguage={outputLanguage}
           languageSelectHandler={languageSelectHandler}
+          backButtonClickedHandler={closeLanguageSelector}
         ></LanguageSelector>
       </main>
 

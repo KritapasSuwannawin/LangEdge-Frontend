@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Transition } from 'react-transition-group';
 
 import { useAppSelector } from '../../hooks/useRedux';
@@ -10,6 +10,7 @@ import { fadingStyle } from '../../utilities/transitionUtility';
 import './Profile.scss';
 
 import SignOutIcon from '../../assets/signOut.svg?react';
+import XmarkIcon from '../../assets/xmark.svg?react';
 
 function Profile() {
   const signOut = useSignOut();
@@ -23,7 +24,11 @@ function Profile() {
   const profilePictureRef = useRef<HTMLImageElement>(null);
   const profileDetailsRef = useRef<HTMLDivElement>(null);
 
-  useClickOutsideHandler(isProfileDetailsOpen, setIsProfileDetailsOpen, [profilePictureRef, profileDetailsRef]);
+  const closeProfileDetails = useCallback(() => {
+    setIsProfileDetailsOpen(false);
+  }, []);
+
+  useClickOutsideHandler(isProfileDetailsOpen, closeProfileDetails, [profilePictureRef, profileDetailsRef]);
 
   function toggleProfileDetailsHandler() {
     setIsProfileDetailsOpen((prev) => !prev);
@@ -36,7 +41,13 @@ function Profile() {
 
   return (
     <div className="profile">
-      <img src={pictureUrl} alt="Profile" className="profile__picture" ref={profilePictureRef} onClick={toggleProfileDetailsHandler} />
+      <img
+        src={pictureUrl}
+        alt="Profile"
+        className={`profile__picture ${isProfileDetailsOpen ? 'active' : ''}`}
+        ref={profilePictureRef}
+        onClick={toggleProfileDetailsHandler}
+      />
 
       <Transition nodeRef={profileDetailsRef} in={isProfileDetailsOpen} timeout={150} mountOnEnter unmountOnExit>
         {(state) => (
@@ -50,6 +61,10 @@ function Profile() {
                 <p className="name">{name}</p>
                 <p className="email">{email}</p>
               </div>
+
+              <button className="close-btn" onClick={closeProfileDetails}>
+                <XmarkIcon></XmarkIcon>
+              </button>
             </div>
 
             <button className="profile__sign-out-btn" onClick={signoutHandler}>
