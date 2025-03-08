@@ -48,6 +48,7 @@ const useSignIn = () => {
         email: zod.string(),
         name: zod.string(),
         pictureUrl: zod.string().optional(),
+        lastUsedLanguageId: zod.number().int().positive().optional(),
       });
 
       const { success, data: userData } = dataSchema.safeParse(data);

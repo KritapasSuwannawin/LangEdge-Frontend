@@ -22,6 +22,7 @@ function Translate() {
   const signIn = useSignIn();
 
   const userId = useAppSelector((state) => state.user.userId);
+  const lastUsedLanguageId = useAppSelector((state) => state.user.lastUsedLanguageId);
 
   const [languageArr, setLanguageArr] = useState<Language[]>([]);
   const [outputLanguage, setOutputLanguage] = useState<Language | undefined>(undefined);
@@ -106,20 +107,22 @@ function Translate() {
       });
   }, [fetch]);
 
-  // Set output language to English
+  // Set output language to last used language or English
   useEffect(() => {
     if (languageArr.length === 0) {
       return;
     }
 
-    let outputLanguage = languageArr.find((language) => language.name === 'English');
+    let outputLanguage = languageArr.find((language) =>
+      lastUsedLanguageId ? language.id === lastUsedLanguageId : language.name === 'English'
+    );
 
     if (!outputLanguage) {
       outputLanguage = languageArr[1];
     }
 
     setOutputLanguage(outputLanguage);
-  }, [languageArr]);
+  }, [languageArr, lastUsedLanguageId]);
 
   // Output language change -> Reset all output states
   useEffect(() => {
@@ -132,6 +135,23 @@ function Translate() {
       resetOutputState();
     }
   }, [userId, resetOutputState]);
+
+  // Signed in && Output language change -> Save last used language
+  useEffect(() => {
+    if (!userId || !outputLanguage) {
+      return;
+    }
+
+    fetch('/api/user', 'PATCH', { body: { lastUsedLanguageId: outputLanguage.id } })
+      .then(({ ok }) => {
+        if (!ok) {
+          throw new Error('Failed to save last used language');
+        }
+      })
+      .catch((err: unknown) => {
+        logError('saveLastUsedLanguage', err);
+      });
+  }, [userId, outputLanguage, fetch]);
 
   // Input text change -> Reset all output states
   function inputTextChangeHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {
