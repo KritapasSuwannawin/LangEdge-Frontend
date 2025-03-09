@@ -1,45 +1,35 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect } from 'react';
 import zod from 'zod';
 
 import { Language } from '../../interfaces';
 
 import useFetch from '../../hooks/useFetch';
-import { useAppSelector } from '../../hooks/useRedux';
-import useSignIn from '../../hooks/useSignIn';
-import useClickOutsideHandler from '../../hooks/useClickOutsideHandler';
+import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
+
+import { translationActions } from '../../store';
 
 import { logError } from '../../utilities/systemUtility';
 import { toastInfo } from '../../utilities/toastUtility';
 
 import './Translate.scss';
 import Spinner from '../../components/spinner/Spinner';
-import LanguageSelector from '../../components/languageSelector/LanguageSelector';
-
-import ChevronIcon from '../../assets/chevron.svg?react';
+import InputSection from './sections/InputSection';
+import TranslationSection from './sections/TranslationSection';
+import SynonymSection from './sections/SynonymSection';
+import ExampleSentenceSection from './sections/ExampleSentenceSection';
 
 function Translate() {
+  const dispatch = useAppDispatch();
   const fetch = useFetch();
-  const signIn = useSignIn();
 
   const userId = useAppSelector((state) => state.user.userId);
   const lastUsedLanguageId = useAppSelector((state) => state.user.lastUsedLanguageId);
 
-  const [languageArr, setLanguageArr] = useState<Language[]>([]);
-  const [outputLanguage, setOutputLanguage] = useState<Language | undefined>(undefined);
+  const languageArr = useAppSelector((state) => state.translation.languageArr);
+  const isTranslating = useAppSelector((state) => state.translation.isTranslating);
+  const outputLanguage = useAppSelector((state) => state.translation.outputLanguage);
 
-  const [inputText, setInputText] = useState('');
-  const [originalLanguageName, setOriginalLanguageName] = useState<string | undefined>(undefined);
-  const [inputTextSynonymArr, setInputTextSynonymArr] = useState<string[]>([]);
-  const [translation, setTranslation] = useState('');
-  const [translationSynonymArr, setTranslationSynonymArr] = useState<string[]>([]);
-  const [exampleSentenceArr, setExampleSentenceArr] = useState<{ sentence: string; translation: string }[]>([]);
-
-  const [isOpenLanguageSelector, setIsOpenLanguageSelector] = useState(false);
-  const [isTranslating, setIsTranslating] = useState(false);
-  const [isSigningIn, setIsSigningIn] = useState(false);
-
-  const outputLanguageButtonRef = useRef<HTMLButtonElement>(null);
-  const languageSelectorRef = useRef<HTMLDivElement>(null);
+  const inputSectionRef = useRef<{ setInputText: (inputText: string) => void }>(null);
 
   const lastTranslation = useRef<
     | {
@@ -54,21 +44,7 @@ function Translate() {
     | undefined
   >(undefined);
 
-  const isDoneInitializing = languageArr.length > 0 && outputLanguage;
-
-  const resetOutputState = useCallback(() => {
-    setOriginalLanguageName(undefined);
-    setInputTextSynonymArr([]);
-    setTranslation('');
-    setTranslationSynonymArr([]);
-    setExampleSentenceArr([]);
-  }, []);
-
-  const closeLanguageSelector = useCallback(() => {
-    setIsOpenLanguageSelector(false);
-  }, []);
-
-  useClickOutsideHandler(isOpenLanguageSelector, closeLanguageSelector, [outputLanguageButtonRef, languageSelectorRef]);
+  const isDoneInitializing = languageArr && languageArr.length > 0 && outputLanguage;
 
   // Load available languages
   useEffect(() => {
@@ -100,16 +76,16 @@ function Translate() {
           throw new Error('No language available');
         }
 
-        setLanguageArr(languageArr.sort((a, b) => a.name.localeCompare(b.name)));
+        dispatch(translationActions.setLanguageArr(languageArr.sort((a, b) => a.name.localeCompare(b.name))));
       })
       .catch((err: unknown) => {
         logError('language', err);
       });
-  }, [fetch]);
+  }, [fetch, dispatch]);
 
   // Set output language to last used language or English
   useEffect(() => {
-    if (languageArr.length === 0) {
+    if (!languageArr) {
       return;
     }
 
@@ -121,20 +97,20 @@ function Translate() {
       outputLanguage = languageArr[1];
     }
 
-    setOutputLanguage(outputLanguage);
-  }, [languageArr, lastUsedLanguageId]);
+    dispatch(translationActions.setOutputLanguage(outputLanguage));
+  }, [languageArr, lastUsedLanguageId, dispatch]);
 
-  // Output language change -> Reset all output states
+  // Output language change -> Clear translation output
   useEffect(() => {
-    resetOutputState();
-  }, [outputLanguage, resetOutputState]);
+    dispatch(translationActions.clearTranslationOutput());
+  }, [outputLanguage, dispatch]);
 
-  // Sign out -> Reset all output states
+  // Sign out -> Clear translation output
   useEffect(() => {
     if (!userId) {
-      resetOutputState();
+      dispatch(translationActions.clearTranslationOutput());
     }
-  }, [userId, resetOutputState]);
+  }, [userId, dispatch]);
 
   // Signed in && Output language change -> Save last used language
   useEffect(() => {
@@ -153,18 +129,11 @@ function Translate() {
       });
   }, [userId, outputLanguage, fetch]);
 
-  // Input text change -> Reset all output states
-  function inputTextChangeHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setInputText(event.target.value);
-
-    resetOutputState();
-  }
-
-  // Main translation function
-  function translate(inputText: string, outputLanguage: Language) {
+  function translateHandler(inputText: string, outputLanguage: Language) {
     const trimmedInputText = inputText.trim();
-    setInputText(trimmedInputText);
-    setOutputLanguage(outputLanguage);
+
+    inputSectionRef.current?.setInputText(trimmedInputText);
+    dispatch(translationActions.setOutputLanguage(outputLanguage));
 
     if (!trimmedInputText || isTranslating) {
       return;
@@ -176,19 +145,21 @@ function Translate() {
       lastTranslation.current.inputText === trimmedInputText &&
       lastTranslation.current.outputLanguageId === outputLanguage.id
     ) {
-      setOriginalLanguageName(lastTranslation.current.originalLanguageName);
-      setInputTextSynonymArr(lastTranslation.current.inputTextSynonymArr);
-      setTranslation(lastTranslation.current.translation);
-      setTranslationSynonymArr(lastTranslation.current.translationSynonymArr);
-      setExampleSentenceArr(lastTranslation.current.exampleSentenceArr);
+      dispatch(
+        translationActions.setTranslationOutput({
+          originalLanguageName: lastTranslation.current.originalLanguageName,
+          inputTextSynonymArr: lastTranslation.current.inputTextSynonymArr,
+          translation: lastTranslation.current.translation,
+          translationSynonymArr: lastTranslation.current.translationSynonymArr,
+          exampleSentenceArr: lastTranslation.current.exampleSentenceArr,
+        })
+      );
 
       return;
     }
 
-    // Reset all output states
-    resetOutputState();
-
-    setIsTranslating(true);
+    dispatch(translationActions.clearTranslationOutput());
+    dispatch(translationActions.setIsTranslating(true));
 
     const query = `?text=${encodeURIComponent(trimmedInputText)}&outputLanguageId=${outputLanguage.id.toString()}`;
 
@@ -245,11 +216,15 @@ function Translate() {
           exampleSentenceArr = [],
         } = parseData;
 
-        setOriginalLanguageName(originalLanguageName);
-        setInputTextSynonymArr(inputTextSynonymArr);
-        setTranslation(translation);
-        setTranslationSynonymArr(translationSynonymArr);
-        setExampleSentenceArr(exampleSentenceArr);
+        dispatch(
+          translationActions.setTranslationOutput({
+            originalLanguageName,
+            inputTextSynonymArr,
+            translation,
+            translationSynonymArr,
+            exampleSentenceArr,
+          })
+        );
 
         lastTranslation.current = {
           inputText: trimmedInputText,
@@ -270,47 +245,8 @@ function Translate() {
         logError('translate', err);
       })
       .finally(() => {
-        setIsTranslating(false);
+        dispatch(translationActions.setIsTranslating(false));
       });
-  }
-
-  // Output language button clicked -> Toggle language selector
-  function outputLanguageButtonClickHandler() {
-    setIsOpenLanguageSelector((prev) => !prev);
-  }
-
-  // Output language selected -> Close language selector
-  function languageSelectHandler(language: Language) {
-    setOutputLanguage(language);
-    setIsOpenLanguageSelector(false);
-  }
-
-  // Synonym clicked -> Translate synonym
-  function synonymButtonClickHandler(options: { synonym: string; isSwapLanguage?: boolean }) {
-    const { synonym, isSwapLanguage } = options;
-
-    if (!outputLanguage) {
-      return;
-    }
-
-    translate(
-      synonym,
-      isSwapLanguage ? languageArr.find((language) => language.name === originalLanguageName) ?? outputLanguage : outputLanguage
-    );
-  }
-
-  function signInClickHandler() {
-    void (async () => {
-      try {
-        setIsSigningIn(true);
-
-        await signIn();
-      } catch (err) {
-        logError('signInClickHandler', err, 'Failed to sign in');
-      } finally {
-        setIsSigningIn(false);
-      }
-    })();
   }
 
   if (!isDoneInitializing) {
@@ -324,93 +260,16 @@ function Translate() {
   return (
     <div className="translate">
       <main className="translate__main">
-        <div className="translate__main--input">
-          <div className="language">
-            <p className="language__text">Auto detect {originalLanguageName ? <>&ndash; {originalLanguageName}</> : ''}</p>
-          </div>
+        <InputSection ref={inputSectionRef} translateHandler={translateHandler} />
 
-          <div className="input-container">
-            <textarea value={inputText} maxLength={400} onChange={inputTextChangeHandler} autoFocus />
-
-            <div className="input-container__bottom">
-              <span className="input-container__bottom--counter">{inputText.length} / 400</span>
-
-              {userId ? (
-                <button className="input-container__bottom--button" onClick={translate.bind(null, inputText, outputLanguage)}>
-                  {isTranslating ? <Spinner isThin /> : 'Translate'}
-                </button>
-              ) : (
-                <button className="input-container__bottom--button unauthenticated" onClick={signInClickHandler}>
-                  {isSigningIn ? <Spinner isThin /> : 'Sign in'}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="translate__main--translation">
-          <button ref={outputLanguageButtonRef} className="language clickable" onClick={outputLanguageButtonClickHandler}>
-            <p className="language__text">{outputLanguage.name}</p>
-            <ChevronIcon className={`language__icon ${isOpenLanguageSelector ? 'active' : ''}`} />
-          </button>
-
-          <div className="input-container">
-            <textarea disabled value={translation} />
-          </div>
-        </div>
-
-        <LanguageSelector
-          ref={languageSelectorRef}
-          isOpen={isOpenLanguageSelector}
-          languageArr={languageArr}
-          selectedLanguage={outputLanguage}
-          languageSelectHandler={languageSelectHandler}
-          backButtonClickedHandler={closeLanguageSelector}
-        ></LanguageSelector>
+        <TranslationSection />
       </main>
 
-      {inputTextSynonymArr.length > 0 && (
-        <div className="translate__synonym">
-          <h2 className="title">Synonyms</h2>
+      <SynonymSection type="inputSynonym" translateHandler={translateHandler} />
 
-          <ul className="list-container">
-            {inputTextSynonymArr.map((synonym, index) => (
-              <li key={index} className="item">
-                <button onClick={synonymButtonClickHandler.bind(null, { synonym })}>{synonym}</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <SynonymSection type="translationSynonym" translateHandler={translateHandler} />
 
-      {translationSynonymArr.length > 0 && (
-        <div className="translate__more-translation">
-          <h2 className="title">More translations</h2>
-
-          <ul className="list-container">
-            {translationSynonymArr.map((synonym, index) => (
-              <li key={index} className="item">
-                <button onClick={synonymButtonClickHandler.bind(null, { synonym, isSwapLanguage: true })}>{synonym}</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {exampleSentenceArr.length > 0 && (
-        <div className="translate__example-sentence">
-          <h2 className="title">Example sentences</h2>
-
-          <ul className="list-container">
-            {exampleSentenceArr.map(({ sentence, translation }, index) => (
-              <li key={index} className="item">
-                <p className="sentence">{sentence}</p>
-                <p className="translation">{translation}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <ExampleSentenceSection />
     </div>
   );
 }

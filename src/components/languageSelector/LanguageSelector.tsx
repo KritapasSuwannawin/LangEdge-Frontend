@@ -15,6 +15,7 @@ interface LanguageSelectorProps {
 
 function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDivElement>) {
   const { isOpen, languageArr, selectedLanguage, languageSelectHandler, backButtonClickedHandler } = props;
+
   const [searchQuery, setSearchQuery] = useState('');
 
   const searchQueryRef = useRef<HTMLInputElement>(null);
@@ -27,6 +28,10 @@ function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDi
 
   function searchQueryChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchQuery(e.target.value.trim());
+  }
+
+  if (!isOpen) {
+    return null;
   }
 
   // Filter languages based on search query & Sort them based on whether they start with the search query
@@ -46,10 +51,6 @@ function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDi
 
       return 0;
     });
-
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <div className="language-selector" ref={ref}>
