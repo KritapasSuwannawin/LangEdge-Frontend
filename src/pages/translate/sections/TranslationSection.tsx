@@ -53,7 +53,7 @@ function TranslationSection() {
         </button>
 
         <div className="input-container">
-          <textarea disabled value={translation ?? ''} />
+          <textarea readOnly value={translation ?? ''} />
         </div>
       </div>
 
