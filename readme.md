@@ -15,7 +15,7 @@ LangEdge is a web application designed to make language learning and translation
 
 ## Links
 
-- **Live Website**: [langedge.pages.dev](https://langedge.pages.dev)
+- **Live Website**: [langedge.kritapas.dev](https://langedge.kritapas.dev)
 - **UI Design**: [Figma Design](https://www.figma.com/design/vBjx4ndDeEN2gsqUiAExXl/LangEdge-AI?node-id=0-1&t=pK12BDustvrseLDf-1)
 - **Backend Repository**: [LangEdge-Backend](https://github.com/KritapasSuwannawin/LangEdge-Backend)
 
