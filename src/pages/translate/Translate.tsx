@@ -105,9 +105,10 @@ function Translate() {
     dispatch(translationActions.clearTranslationOutput());
   }, [outputLanguage, dispatch]);
 
-  // Sign out -> Clear translation output
+  // Sign out -> Clear input & translation output
   useEffect(() => {
     if (!userId) {
+      inputSectionRef.current?.setInputText('');
       dispatch(translationActions.clearTranslationOutput());
     }
   }, [userId, dispatch]);
