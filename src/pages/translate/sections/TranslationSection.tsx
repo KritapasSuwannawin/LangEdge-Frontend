@@ -3,9 +3,9 @@ import { useState, useRef, useCallback } from 'react';
 import ChevronIcon from '@/assets/chevron.svg?react';
 import LanguageSelector from '@/components/languageSelector/LanguageSelector';
 import useClickOutsideHandler from '@/hooks/useClickOutsideHandler';
-import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
+import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
 import { Language } from '@/interfaces';
-import { translationActions } from '@/store';
+import { translationActions } from '@/app/store';
 
 function TranslationSection() {
   const dispatch = useAppDispatch();

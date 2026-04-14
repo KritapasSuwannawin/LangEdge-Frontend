@@ -4,9 +4,9 @@ import { Transition } from 'react-transition-group';
 import SignOutIcon from '@/assets/signOut.svg?react';
 import XmarkIcon from '@/assets/xmark.svg?react';
 import useClickOutsideHandler from '@/hooks/useClickOutsideHandler';
-import { useAppSelector } from '@/hooks/useRedux';
+import { useAppSelector } from '@/app/store/hooks';
 import useSignOut from '@/hooks/useSignOut';
-import { fadingStyle } from '@/utilities/transitionUtility';
+import { fadingStyle } from '@/shared/lib';
 
 import './Profile.scss';
 

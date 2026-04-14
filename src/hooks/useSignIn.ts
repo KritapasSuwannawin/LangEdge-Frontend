@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import zod from 'zod';
 
-import { googleSignIn } from '@/externals/firebase';
-import { userActions } from '@/store';
-import { getToken } from '@/utilities/browserUtility';
+import { googleSignIn } from '@/shared/config';
+import { userActions } from '@/app/store';
+import { getToken } from '@/shared/lib';
 
-import { useAppDispatch } from './useRedux';
+import { useAppDispatch } from '@/app/store';
 import useFetch from './useFetch';
 
 const useSignIn = () => {

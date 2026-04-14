@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/hooks/useRedux';
+import { useAppSelector } from '@/app/store/hooks';
 import SignInButton from '@/components/buttons/signInButton/SignInButton';
 import Profile from '@/components/profile/Profile';
 

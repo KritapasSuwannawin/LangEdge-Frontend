@@ -1,11 +1,11 @@
 import { useState, forwardRef, ForwardedRef, useImperativeHandle } from 'react';
 
-import Spinner from '@/components/spinner/Spinner';
+import { Spinner } from '@/shared/ui';
 import useSignIn from '@/hooks/useSignIn';
-import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
+import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
 import { Language } from '@/interfaces';
-import { translationActions } from '@/store';
-import { logErrorWithToast } from '@/utilities/systemUtility';
+import { translationActions } from '@/app/store';
+import { logErrorWithToast } from '@/shared/lib';
 
 interface InputSectionProps {
   translateHandler: (inputText: string, outputLanguage: Language) => void;

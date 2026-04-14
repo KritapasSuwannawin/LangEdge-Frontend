@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import Spinner from '@/components/spinner/Spinner';
+import { Spinner } from '@/shared/ui';
 import useSignIn from '@/hooks/useSignIn';
-import { logErrorWithToast } from '@/utilities/systemUtility';
+import { logErrorWithToast } from '@/shared/lib';
 
 import './SignInButton.scss';
 

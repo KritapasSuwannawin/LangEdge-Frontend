@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/hooks/useRedux';
+import { useAppSelector } from '@/app/store/hooks';
 import { Language } from '@/interfaces';
 
 interface SynonymSectionProps {

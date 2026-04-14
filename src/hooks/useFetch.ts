@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 import zod from 'zod';
 
-import { getToken, setToken } from '@/utilities/browserUtility';
-import { logError } from '@/utilities/systemUtility';
+import { getToken, setToken, logError } from '@/shared/lib';
 
 import useSignOut from './useSignOut';
 

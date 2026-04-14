@@ -1,13 +1,12 @@
 import { useRef, useEffect } from 'react';
 import zod from 'zod';
 
-import Spinner from '@/components/spinner/Spinner';
+import { Spinner } from '@/shared/ui';
 import useFetch from '@/hooks/useFetch';
-import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
+import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
 import { Language } from '@/interfaces';
-import { translationActions } from '@/store';
-import { logErrorWithToast } from '@/utilities/systemUtility';
-import { toastInfo } from '@/utilities/toastUtility';
+import { translationActions } from '@/app/store';
+import { logErrorWithToast, toastInfo } from '@/shared/lib';
 
 import './Translate.scss';
 import InputSection from './sections/InputSection';

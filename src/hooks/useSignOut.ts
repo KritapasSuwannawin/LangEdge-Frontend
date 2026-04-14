@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
-import { userActions } from '@/store';
-import { eraseToken } from '@/utilities/browserUtility';
+import { userActions } from '@/app/store';
+import { eraseToken } from '@/shared/lib';
 
-import { useAppDispatch } from './useRedux';
+import { useAppDispatch } from '@/app/store';
 
 const useSignOut = () => {
   const dispatch = useAppDispatch();
