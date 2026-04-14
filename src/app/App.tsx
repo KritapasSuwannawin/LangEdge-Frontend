@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 
-import Nav from '@/components/nav/Nav';
+import { Nav } from '@/widgets/navigation';
+import { useSignIn } from '@/features/auth/sign-in';
 import { Spinner } from '@/shared/ui';
-import useSignIn from '@/hooks/useSignIn';
 import { AppRouter } from '@/app/router';
 import { logError } from '@/shared/lib';
 

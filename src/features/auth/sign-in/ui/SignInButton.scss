@@ -1,4 +1,4 @@
-@use '../../../scss/main.scss' as *;
+@use '../../../../scss/main.scss' as *;
 
 .sign-in-btn {
   @include button($font-weight: 600, $padding: 0.8rem 1.8rem);

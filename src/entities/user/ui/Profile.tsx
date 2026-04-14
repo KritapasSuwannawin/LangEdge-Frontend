@@ -3,19 +3,21 @@ import { Transition } from 'react-transition-group';
 
 import SignOutIcon from '@/assets/signOut.svg?react';
 import XmarkIcon from '@/assets/xmark.svg?react';
-import useClickOutsideHandler from '@/hooks/useClickOutsideHandler';
+import { useClickOutsideHandler } from '@/shared/lib';
 import { useAppSelector } from '@/app/store/hooks';
-import useSignOut from '@/hooks/useSignOut';
 import { fadingStyle } from '@/shared/lib';
+import { selectUserPictureUrl, selectUserName, selectUserEmail } from '../model/userSlice';
 
 import './Profile.scss';
 
-function Profile() {
-  const signOut = useSignOut();
+interface ProfileProps {
+  onSignOut: () => void;
+}
 
-  const pictureUrl = useAppSelector((state) => state.user.pictureUrl);
-  const name = useAppSelector((state) => state.user.name);
-  const email = useAppSelector((state) => state.user.email);
+function Profile({ onSignOut }: ProfileProps) {
+  const pictureUrl = useAppSelector(selectUserPictureUrl);
+  const name = useAppSelector(selectUserName);
+  const email = useAppSelector(selectUserEmail);
 
   const [isProfileDetailsOpen, setIsProfileDetailsOpen] = useState(false);
 
@@ -33,7 +35,7 @@ function Profile() {
   }
 
   function signoutHandler() {
-    signOut();
+    onSignOut();
     setIsProfileDetailsOpen(false);
   }
 

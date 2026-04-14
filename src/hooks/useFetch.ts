@@ -2,8 +2,7 @@ import { useCallback } from 'react';
 import zod from 'zod';
 
 import { getToken, setToken, logError } from '@/shared/lib';
-
-import useSignOut from './useSignOut';
+import { useSignOut } from '@/features/auth/sign-out';
 
 const useFetch = () => {
   const signOut = useSignOut();

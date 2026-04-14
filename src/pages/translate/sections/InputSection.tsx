@@ -1,7 +1,7 @@
 import { useState, forwardRef, ForwardedRef, useImperativeHandle } from 'react';
 
+import { useSignIn } from '@/features/auth/sign-in';
 import { Spinner } from '@/shared/ui';
-import useSignIn from '@/hooks/useSignIn';
 import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
 import { Language } from '@/interfaces';
 import { translationActions } from '@/app/store';

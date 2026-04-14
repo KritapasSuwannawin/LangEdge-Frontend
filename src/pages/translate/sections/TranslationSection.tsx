@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 
 import ChevronIcon from '@/assets/chevron.svg?react';
 import LanguageSelector from '@/components/languageSelector/LanguageSelector';
-import useClickOutsideHandler from '@/hooks/useClickOutsideHandler';
+import { useClickOutsideHandler } from '@/shared/lib';
 import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
 import { Language } from '@/interfaces';
 import { translationActions } from '@/app/store';

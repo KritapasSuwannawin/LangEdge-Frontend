@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import zod from 'zod';
 
 import { googleSignIn } from '@/shared/config';
-import { userActions } from '@/entities/user';
 import { getToken } from '@/shared/lib';
+import { userActions, userSignInResponseSchema, type UserSignInData } from '@/entities/user';
 
 import { useAppDispatch } from '@/app/store';
-import useFetch from './useFetch';
+// Bridge until Feature 4: useFetch moves to a shared API primitive
+import useFetch from '@/hooks/useFetch';
 
 const useSignIn = () => {
   const dispatch = useAppDispatch();
@@ -41,19 +41,13 @@ const useSignIn = () => {
         throw new Error(message);
       }
 
-      const dataSchema = zod.object({
-        userId: zod.string(),
-        email: zod.string(),
-        name: zod.string(),
-        pictureUrl: zod.string().optional(),
-        lastUsedLanguageId: zod.number().int().positive().optional(),
-      });
+      const parsedResult = userSignInResponseSchema.safeParse(data);
 
-      const { success, data: userData } = dataSchema.safeParse(data);
-
-      if (!success) {
+      if (!parsedResult.success) {
         throw new Error('Invalid data format');
       }
+
+      const userData: UserSignInData = parsedResult.data;
 
       dispatch(userActions.setUser(userData));
     },
