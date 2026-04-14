@@ -1,14 +1,12 @@
 import { useCallback } from 'react';
 import zod from 'zod';
 
-import { googleSignIn } from '../externals/firebase';
+import { googleSignIn } from '@/externals/firebase';
+import { userActions } from '@/store';
+import { getToken } from '@/utilities/browserUtility';
 
 import { useAppDispatch } from './useRedux';
 import useFetch from './useFetch';
-
-import { userActions } from '../store';
-
-import { getToken } from '../utilities/browserUtility';
 
 const useSignIn = () => {
   const dispatch = useAppDispatch();
@@ -59,7 +57,7 @@ const useSignIn = () => {
 
       dispatch(userActions.setUser(userData));
     },
-    [dispatch, fetch]
+    [dispatch, fetch],
   );
 };
 

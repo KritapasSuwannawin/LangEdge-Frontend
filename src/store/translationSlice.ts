@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import { Language } from '../interfaces';
+import { Language } from '@/interfaces';
 
 const translationSlice = createSlice({
   name: 'translation',
@@ -37,7 +37,7 @@ const translationSlice = createSlice({
         translation: string;
         translationSynonymArr: string[];
         exampleSentenceArr: { sentence: string; translation: string }[];
-      }>
+      }>,
     ) => {
       state.translationOutput = action.payload;
     },

@@ -1,15 +1,11 @@
 import { useState, forwardRef, ForwardedRef, useImperativeHandle } from 'react';
 
-import { Language } from '../../../interfaces';
-
-import { useAppSelector, useAppDispatch } from '../../../hooks/useRedux';
-import useSignIn from '../../../hooks/useSignIn';
-
-import { translationActions } from '../../../store';
-
-import { logError } from '../../../utilities/systemUtility';
-
-import Spinner from '../../../components/spinner/Spinner';
+import Spinner from '@/components/spinner/Spinner';
+import useSignIn from '@/hooks/useSignIn';
+import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
+import { Language } from '@/interfaces';
+import { translationActions } from '@/store';
+import { logError } from '@/utilities/systemUtility';
 
 interface InputSectionProps {
   translateHandler: (inputText: string, outputLanguage: Language) => void;
@@ -37,7 +33,7 @@ function InputSection(props: InputSectionProps, ref: ForwardedRef<{ setInputText
     () => ({
       setInputText,
     }),
-    []
+    [],
   );
 
   function inputTextChangeHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {

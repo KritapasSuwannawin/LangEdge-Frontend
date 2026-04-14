@@ -1,16 +1,14 @@
 import { useState, useRef, useCallback } from 'react';
 import { Transition } from 'react-transition-group';
 
-import { useAppSelector } from '../../hooks/useRedux';
-import useClickOutsideHandler from '../../hooks/useClickOutsideHandler';
-import useSignOut from '../../hooks/useSignOut';
-
-import { fadingStyle } from '../../utilities/transitionUtility';
+import SignOutIcon from '@/assets/signOut.svg?react';
+import XmarkIcon from '@/assets/xmark.svg?react';
+import useClickOutsideHandler from '@/hooks/useClickOutsideHandler';
+import { useAppSelector } from '@/hooks/useRedux';
+import useSignOut from '@/hooks/useSignOut';
+import { fadingStyle } from '@/utilities/transitionUtility';
 
 import './Profile.scss';
-
-import SignOutIcon from '../../assets/signOut.svg?react';
-import XmarkIcon from '../../assets/xmark.svg?react';
 
 function Profile() {
   const signOut = useSignOut();

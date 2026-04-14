@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import zod from 'zod';
 
-import useSignOut from './useSignOut';
+import { getToken, setToken } from '@/utilities/browserUtility';
+import { logError } from '@/utilities/systemUtility';
 
-import { getToken, setToken } from '../utilities/browserUtility';
-import { logError } from '../utilities/systemUtility';
+import useSignOut from './useSignOut';
 
 const useFetch = () => {
   const signOut = useSignOut();
@@ -41,7 +41,7 @@ const useFetch = () => {
     async (
       path = '/',
       method = 'GET',
-      options: { body?: Record<string, unknown>; signal?: AbortSignal; accessToken?: string; refreshToken?: string } = {}
+      options: { body?: Record<string, unknown>; signal?: AbortSignal; accessToken?: string; refreshToken?: string } = {},
     ): Promise<{ ok: boolean; data?: Record<string, unknown>; message: string }> => {
       const { body, signal, accessToken: inputAccessToken, refreshToken: inputRefreshToken } = options;
       const accessToken = inputAccessToken ?? getToken('accessToken');
@@ -88,7 +88,7 @@ const useFetch = () => {
 
       return { ok, data, message: message ?? (!ok ? 'Unknown error' : 'Success') };
     },
-    [refreshAccessToken, signOut]
+    [refreshAccessToken, signOut],
   );
 
   return callback;

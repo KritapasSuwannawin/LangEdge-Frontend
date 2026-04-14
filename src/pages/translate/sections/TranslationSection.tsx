@@ -1,15 +1,11 @@
 import { useState, useRef, useCallback } from 'react';
 
-import { Language } from '../../../interfaces';
-
-import { useAppSelector, useAppDispatch } from '../../../hooks/useRedux';
-import useClickOutsideHandler from '../../../hooks/useClickOutsideHandler';
-
-import { translationActions } from '../../../store';
-
-import LanguageSelector from '../../../components/languageSelector/LanguageSelector';
-
-import ChevronIcon from '../../../assets/chevron.svg?react';
+import ChevronIcon from '@/assets/chevron.svg?react';
+import LanguageSelector from '@/components/languageSelector/LanguageSelector';
+import useClickOutsideHandler from '@/hooks/useClickOutsideHandler';
+import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
+import { Language } from '@/interfaces';
+import { translationActions } from '@/store';
 
 function TranslationSection() {
   const dispatch = useAppDispatch();

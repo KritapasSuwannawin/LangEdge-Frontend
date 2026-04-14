@@ -55,6 +55,12 @@ npm run dev
 npm run build
 ```
 
+## Type Checking
+
+```bash
+npm run typecheck
+```
+
 ## Copyright
 
 © 2025 Kritapas Suwannawin. All rights reserved.

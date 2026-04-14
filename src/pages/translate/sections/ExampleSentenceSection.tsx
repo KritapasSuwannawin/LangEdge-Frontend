@@ -1,4 +1,4 @@
-import { useAppSelector } from '../../../hooks/useRedux';
+import { useAppSelector } from '@/hooks/useRedux';
 
 function ExampleSentenceSection() {
   const translationOutput = useAppSelector((state) => state.translation.translationOutput);

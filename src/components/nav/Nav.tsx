@@ -1,8 +1,8 @@
-import { useAppSelector } from '../../hooks/useRedux';
+import { useAppSelector } from '@/hooks/useRedux';
+import SignInButton from '@/components/buttons/signInButton/SignInButton';
+import Profile from '@/components/profile/Profile';
 
 import './Nav.scss';
-import SignInButton from '../buttons/signInButton/SignInButton';
-import Profile from '../profile/Profile';
 
 function Nav() {
   const userId = useAppSelector((state) => state.user.userId);

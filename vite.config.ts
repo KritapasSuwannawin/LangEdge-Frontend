@@ -16,6 +16,11 @@ export default defineConfig({
     }),
     eslint({ cache: false, emitWarningAsError: true }),
   ],
+  resolve: {
+    alias: {
+      '@': new URL('./src', import.meta.url).pathname,
+    },
+  },
   server: {
     port: 3000,
   },

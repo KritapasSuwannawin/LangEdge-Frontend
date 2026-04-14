@@ -1,6 +1,5 @@
-import { Language } from '../../../interfaces';
-
-import { useAppSelector } from '../../../hooks/useRedux';
+import { useAppSelector } from '@/hooks/useRedux';
+import { Language } from '@/interfaces';
 
 interface SynonymSectionProps {
   type: 'inputSynonym' | 'translationSynonym';
@@ -28,7 +27,7 @@ function SynonymSection(props: SynonymSectionProps) {
 
     translateHandler(
       synonym,
-      isSwapLanguage ? languageArr.find((language) => language.name === originalLanguageName) ?? outputLanguage : outputLanguage
+      isSwapLanguage ? (languageArr.find((language) => language.name === originalLanguageName) ?? outputLanguage) : outputLanguage,
     );
   }
 

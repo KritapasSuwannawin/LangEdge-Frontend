@@ -1,11 +1,10 @@
 import { useState } from 'react';
 
-import useSignIn from '../../../hooks/useSignIn';
-
-import { logError } from '../../../utilities/systemUtility';
+import Spinner from '@/components/spinner/Spinner';
+import useSignIn from '@/hooks/useSignIn';
+import { logError } from '@/utilities/systemUtility';
 
 import './SignInButton.scss';
-import Spinner from '../../spinner/Spinner';
 
 function SignInButton() {
   const signIn = useSignIn();

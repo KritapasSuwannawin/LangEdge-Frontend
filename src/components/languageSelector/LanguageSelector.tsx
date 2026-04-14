@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, forwardRef, ForwardedRef } from 'react';
-import { Language } from '../../interfaces';
+import { Language } from '@/interfaces';
+import ArrowIcon from '@/assets/arrow.svg?react';
 
 import './LanguageSelector.scss';
-
-import ArrowIcon from '../../assets/arrow.svg?react';
 
 interface LanguageSelectorProps {
   isOpen: boolean;

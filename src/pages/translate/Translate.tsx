@@ -1,18 +1,15 @@
 import { useRef, useEffect } from 'react';
 import zod from 'zod';
 
-import { Language } from '../../interfaces';
-
-import useFetch from '../../hooks/useFetch';
-import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
-
-import { translationActions } from '../../store';
-
-import { logError } from '../../utilities/systemUtility';
-import { toastInfo } from '../../utilities/toastUtility';
+import Spinner from '@/components/spinner/Spinner';
+import useFetch from '@/hooks/useFetch';
+import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
+import { Language } from '@/interfaces';
+import { translationActions } from '@/store';
+import { logError } from '@/utilities/systemUtility';
+import { toastInfo } from '@/utilities/toastUtility';
 
 import './Translate.scss';
-import Spinner from '../../components/spinner/Spinner';
 import InputSection from './sections/InputSection';
 import TranslationSection from './sections/TranslationSection';
 import SynonymSection from './sections/SynonymSection';
@@ -60,7 +57,7 @@ function Translate() {
               id: zod.number(),
               name: zod.string(),
               code: zod.string(),
-            })
+            }),
           ),
         });
 
@@ -90,7 +87,7 @@ function Translate() {
     }
 
     let outputLanguage = languageArr.find((language) =>
-      lastUsedLanguageId ? language.id === lastUsedLanguageId : language.name === 'English'
+      lastUsedLanguageId ? language.id === lastUsedLanguageId : language.name === 'English',
     );
 
     if (!outputLanguage) {
@@ -153,7 +150,7 @@ function Translate() {
           translation: lastTranslation.current.translation,
           translationSynonymArr: lastTranslation.current.translationSynonymArr,
           exampleSentenceArr: lastTranslation.current.exampleSentenceArr,
-        })
+        }),
       );
 
       return;
@@ -198,7 +195,7 @@ function Translate() {
               zod.object({
                 sentence: zod.string(),
                 translation: zod.string(),
-              })
+              }),
             )
             .optional(),
         });
@@ -224,7 +221,7 @@ function Translate() {
             translation,
             translationSynonymArr,
             exampleSentenceArr,
-          })
+          }),
         );
 
         lastTranslation.current = {
