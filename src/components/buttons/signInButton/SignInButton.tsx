@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Spinner from '@/components/spinner/Spinner';
 import useSignIn from '@/hooks/useSignIn';
-import { logError } from '@/utilities/systemUtility';
+import { logErrorWithToast } from '@/utilities/systemUtility';
 
 import './SignInButton.scss';
 
@@ -18,7 +18,7 @@ function SignInButton() {
 
         await signIn();
       } catch (err) {
-        logError('signInClickHandler', err, 'Failed to sign in');
+        logErrorWithToast('auth.signIn', err, { toastMessage: 'Failed to sign in' });
       } finally {
         setIsSigningIn(false);
       }

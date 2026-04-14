@@ -67,7 +67,7 @@ const useFetch = () => {
 
             return await callback(path, method, { ...options, accessToken: newAccessToken, refreshToken: newRefreshToken });
           } catch (err) {
-            logError('refreshAccessToken', err, null);
+            logError('auth.refreshAccessToken', err);
           }
         }
 

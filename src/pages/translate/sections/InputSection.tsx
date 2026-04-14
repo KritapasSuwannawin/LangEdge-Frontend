@@ -5,7 +5,7 @@ import useSignIn from '@/hooks/useSignIn';
 import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
 import { Language } from '@/interfaces';
 import { translationActions } from '@/store';
-import { logError } from '@/utilities/systemUtility';
+import { logErrorWithToast } from '@/utilities/systemUtility';
 
 interface InputSectionProps {
   translateHandler: (inputText: string, outputLanguage: Language) => void;
@@ -49,7 +49,7 @@ function InputSection(props: InputSectionProps, ref: ForwardedRef<{ setInputText
 
         await signIn();
       } catch (err) {
-        logError('signInClickHandler', err, 'Failed to sign in');
+        logErrorWithToast('auth.signIn', err, { toastMessage: 'Failed to sign in' });
       } finally {
         setIsSigningIn(false);
       }

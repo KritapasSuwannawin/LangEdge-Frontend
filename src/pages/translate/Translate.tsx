@@ -6,7 +6,7 @@ import useFetch from '@/hooks/useFetch';
 import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
 import { Language } from '@/interfaces';
 import { translationActions } from '@/store';
-import { logError } from '@/utilities/systemUtility';
+import { logErrorWithToast } from '@/utilities/systemUtility';
 import { toastInfo } from '@/utilities/toastUtility';
 
 import './Translate.scss';
@@ -76,7 +76,7 @@ function Translate() {
         dispatch(translationActions.setLanguageArr(languageArr.sort((a, b) => a.name.localeCompare(b.name))));
       })
       .catch((err: unknown) => {
-        logError('language', err);
+        logErrorWithToast('translate.loadLanguages', err);
       });
   }, [fetch, dispatch]);
 
@@ -123,7 +123,7 @@ function Translate() {
         }
       })
       .catch((err: unknown) => {
-        logError('saveLastUsedLanguage', err);
+        logErrorWithToast('user.saveLastUsedLanguage', err);
       });
   }, [userId, outputLanguage, fetch]);
 
@@ -181,7 +181,7 @@ function Translate() {
               break;
           }
 
-          logError('translate', new Error(message), errorMessage);
+          logErrorWithToast('translate.request', new Error(message), { toastMessage: errorMessage });
           return;
         }
 
@@ -240,7 +240,7 @@ function Translate() {
         }
       })
       .catch((err: unknown) => {
-        logError('translate', err);
+        logErrorWithToast('translate.request', err);
       })
       .finally(() => {
         dispatch(translationActions.setIsTranslating(false));

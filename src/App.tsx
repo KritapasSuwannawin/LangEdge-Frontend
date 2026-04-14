@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
-import useSignIn from './hooks/useSignIn';
-
-import { logError } from './utilities/systemUtility';
+import Nav from '@/components/nav/Nav';
+import Spinner from '@/components/spinner/Spinner';
+import useSignIn from '@/hooks/useSignIn';
+import Translate from '@/pages/translate/Translate';
+import { logError } from '@/utilities/systemUtility';
 
 import './App.scss';
-import Translate from './pages/translate/Translate';
-import Nav from './components/nav/Nav';
-import Spinner from './components/spinner/Spinner';
 
 function App() {
   const signIn = useSignIn();
@@ -19,7 +18,7 @@ function App() {
   useEffect(() => {
     signIn({ isAutoSignIn: true })
       .catch((err: unknown) => {
-        logError('autoSignIn', err, null);
+        logError('auth.autoSignIn', err);
       })
       .finally(() => {
         setIsSigningIn(false);
