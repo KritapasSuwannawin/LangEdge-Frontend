@@ -1,22 +1,20 @@
 import { useCallback } from 'react';
 
 import { googleSignIn } from '@/shared/config';
-import { getToken } from '@/shared/lib';
-import { userActions, userSignInResponseSchema, type UserSignInData } from '@/entities/user';
+import { eraseToken, getToken, sessionExpired } from '@/shared/lib';
+import { ApiUnauthorizedError, requestWithAuth } from '@/shared/api';
+import { userActions, userSignInResponseSchema, type UserSignInData, type UserSignInPayload } from '@/entities/user';
 
 import { useAppDispatch } from '@/app/store';
-// Bridge until Feature 4: useFetch moves to a shared API primitive
-import useFetch from '@/hooks/useFetch';
 
 const useSignIn = () => {
   const dispatch = useAppDispatch();
-  const fetch = useFetch();
 
   return useCallback(
     async (options: { isAutoSignIn?: boolean } = {}) => {
       const { isAutoSignIn = false } = options;
 
-      let accessToken: string, refreshToken: string;
+      let authTokens: UserSignInPayload;
 
       if (isAutoSignIn) {
         const storedAccessToken = getToken('accessToken');
@@ -26,32 +24,46 @@ const useSignIn = () => {
           throw new Error('No stored tokens');
         }
 
-        accessToken = storedAccessToken;
-        refreshToken = storedRefreshToken;
+        authTokens = {
+          accessToken: storedAccessToken,
+          refreshToken: storedRefreshToken,
+        };
       } else {
         const { user } = await googleSignIn();
 
-        accessToken = await user.getIdToken();
-        refreshToken = user.refreshToken;
+        authTokens = {
+          accessToken: await user.getIdToken(),
+          refreshToken: user.refreshToken,
+        };
       }
 
-      const { ok, data, message } = await fetch('/api/user/sign-in', 'POST', { accessToken, refreshToken });
+      try {
+        const response = await requestWithAuth<unknown>({
+          path: '/api/user/sign-in',
+          method: 'POST',
+          ...authTokens,
+        });
 
-      if (!ok) {
-        throw new Error(message);
+        const parsedResult = userSignInResponseSchema.safeParse(response.data);
+
+        if (!parsedResult.success) {
+          throw new Error('Invalid data format');
+        }
+
+        const userData: UserSignInData = parsedResult.data;
+
+        dispatch(userActions.setUser(userData));
+      } catch (error) {
+        if (error instanceof ApiUnauthorizedError) {
+          eraseToken('accessToken');
+          eraseToken('refreshToken');
+          dispatch(sessionExpired());
+        }
+
+        throw error;
       }
-
-      const parsedResult = userSignInResponseSchema.safeParse(data);
-
-      if (!parsedResult.success) {
-        throw new Error('Invalid data format');
-      }
-
-      const userData: UserSignInData = parsedResult.data;
-
-      dispatch(userActions.setUser(userData));
     },
-    [dispatch, fetch],
+    [dispatch],
   );
 };
 

@@ -1,15 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
+import { sessionExpired } from '@/shared/lib';
+
+interface UserSliceState {
+  userId: string | undefined;
+  email: string | undefined;
+  name: string | undefined;
+  pictureUrl: string | undefined;
+  lastUsedLanguageId: number | undefined;
+}
+
+const initialState: UserSliceState = {
+  userId: undefined,
+  email: undefined,
+  name: undefined,
+  pictureUrl: undefined,
+  lastUsedLanguageId: undefined,
+};
+
+const clearUserState = (state: UserSliceState): void => {
+  state.userId = undefined;
+  state.email = undefined;
+  state.name = undefined;
+  state.pictureUrl = undefined;
+  state.lastUsedLanguageId = undefined;
+};
+
 const userSlice = createSlice({
   name: 'user',
-  initialState: {
-    userId: undefined as string | undefined,
-    email: undefined as string | undefined,
-    name: undefined as string | undefined,
-    pictureUrl: undefined as string | undefined,
-    lastUsedLanguageId: undefined as number | undefined,
-  },
+  initialState,
   reducers: {
     setUser: (
       state,
@@ -23,17 +43,17 @@ const userSlice = createSlice({
       state.pictureUrl = pictureUrl;
       state.lastUsedLanguageId = lastUsedLanguageId;
     },
-    clearUser: (state) => {
-      state.userId = undefined;
-      state.email = undefined;
-      state.name = undefined;
-      state.pictureUrl = undefined;
-      state.lastUsedLanguageId = undefined;
+    setLastUsedLanguageId: (state, action: PayloadAction<number | undefined>) => {
+      state.lastUsedLanguageId = action.payload;
     },
+    clearUser: clearUserState,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(sessionExpired, clearUserState);
   },
 });
 
-export type UserState = ReturnType<typeof userSlice.getInitialState>;
+export type UserState = UserSliceState;
 
 interface UserRootState {
   user: UserState;

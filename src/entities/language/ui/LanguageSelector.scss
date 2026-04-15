@@ -1,4 +1,4 @@
-@use '../../scss/main.scss' as *;
+@use '../../../scss/main.scss' as *;
 
 .language-selector {
   position: absolute;
@@ -43,6 +43,18 @@
     }
   }
 
+  &__search-field {
+    display: flex;
+    align-items: center;
+    column-gap: 0.8rem;
+    flex: 1;
+  }
+
+  &__search-label {
+    white-space: nowrap;
+    font-size: 1.2rem;
+  }
+
   &__item-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
@@ -58,6 +70,12 @@
       padding: 1.2rem;
       white-space: nowrap;
       border-radius: 0.4rem;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      color: inherit;
 
       &:hover {
         background: $color-hover;

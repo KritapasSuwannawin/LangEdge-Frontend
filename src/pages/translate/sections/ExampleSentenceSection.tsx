@@ -1,11 +1,10 @@
 import { useAppSelector } from '@/app/store/hooks';
+import { selectExampleSentences } from '@/entities/translation';
 
 function ExampleSentenceSection() {
-  const translationOutput = useAppSelector((state) => state.translation.translationOutput);
+  const exampleSentenceArr = useAppSelector(selectExampleSentences);
 
-  const { exampleSentenceArr } = translationOutput ?? {};
-
-  if (!exampleSentenceArr || exampleSentenceArr.length === 0) {
+  if (exampleSentenceArr.length === 0) {
     return null;
   }
 

@@ -1,11 +1,21 @@
 import { useRef, useEffect } from 'react';
-import zod from 'zod';
 
 import { Spinner } from '@/shared/ui';
-import useFetch from '@/hooks/useFetch';
-import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
-import { Language } from '@/interfaces';
-import { translationActions } from '@/app/store';
+import { useAppSelector } from '@/app/store/hooks';
+import {
+  type Language,
+  selectIsLanguageReady,
+  selectOutputLanguage,
+  useInitializeLanguages,
+  useLanguageActions,
+} from '@/entities/language';
+import {
+  type LastTranslationCacheEntry,
+  isTranslationRequestErrorCode,
+  selectIsTranslating,
+  useTranslationActions,
+} from '@/entities/translation';
+import { selectLastUsedLanguageId, selectUserId, usePersistLastUsedLanguage } from '@/entities/user';
 import { logErrorWithToast, toastInfo } from '@/shared/lib';
 
 import './Translate.scss';
@@ -14,123 +24,49 @@ import TranslationSection from './sections/TranslationSection';
 import SynonymSection from './sections/SynonymSection';
 import ExampleSentenceSection from './sections/ExampleSentenceSection';
 
+const TRANSLATION_ERROR_MESSAGES = {
+  invalidInput: 'The input text is invalid',
+  unauthorized: 'Your session has expired, please sign in again.',
+  rateLimited: 'You have reached the limit, please try again later.',
+  unexpected: null,
+} as const;
+
 function Translate() {
-  const dispatch = useAppDispatch();
-  const fetch = useFetch();
+  const { setOutputLanguage } = useLanguageActions();
+  const { clearTranslationOutput, requestTranslation, setTranslationOutput } = useTranslationActions();
 
-  const userId = useAppSelector((state) => state.user.userId);
-  const lastUsedLanguageId = useAppSelector((state) => state.user.lastUsedLanguageId);
+  const userId = useAppSelector(selectUserId);
+  const lastUsedLanguageId = useAppSelector(selectLastUsedLanguageId);
 
-  const languageArr = useAppSelector((state) => state.translation.languageArr);
-  const isTranslating = useAppSelector((state) => state.translation.isTranslating);
-  const outputLanguage = useAppSelector((state) => state.translation.outputLanguage);
+  const isLanguageReady = useAppSelector(selectIsLanguageReady);
+  const isTranslating = useAppSelector(selectIsTranslating);
+  const outputLanguage = useAppSelector(selectOutputLanguage);
 
   const inputSectionRef = useRef<{ setInputText: (inputText: string) => void }>(null);
 
-  const lastTranslation = useRef<
-    | {
-        inputText: string;
-        outputLanguageId: number;
-        originalLanguageName: string;
-        inputTextSynonymArr: string[];
-        translation: string;
-        translationSynonymArr: string[];
-        exampleSentenceArr: { sentence: string; translation: string }[];
-      }
-    | undefined
-  >(undefined);
+  const lastTranslation = useRef<LastTranslationCacheEntry | undefined>(undefined);
 
-  const isDoneInitializing = languageArr && languageArr.length > 0 && outputLanguage;
-
-  // Load available languages
-  useEffect(() => {
-    fetch('/api/language')
-      .then(({ ok, data, message }) => {
-        if (!ok) {
-          throw new Error(message);
-        }
-
-        const dataSchema = zod.object({
-          languageArr: zod.array(
-            zod.object({
-              id: zod.number(),
-              name: zod.string(),
-              code: zod.string(),
-            }),
-          ),
-        });
-
-        const { success, data: parseData } = dataSchema.safeParse(data);
-
-        if (!success) {
-          throw new Error('Invalid data format');
-        }
-
-        const { languageArr } = parseData;
-
-        if (languageArr.length === 0) {
-          throw new Error('No language available');
-        }
-
-        dispatch(translationActions.setLanguageArr(languageArr.sort((a, b) => a.name.localeCompare(b.name))));
-      })
-      .catch((err: unknown) => {
-        logErrorWithToast('translate.loadLanguages', err);
-      });
-  }, [fetch, dispatch]);
-
-  // Set output language to last used language or English
-  useEffect(() => {
-    if (!languageArr) {
-      return;
-    }
-
-    let outputLanguage = languageArr.find((language) =>
-      lastUsedLanguageId ? language.id === lastUsedLanguageId : language.name === 'English',
-    );
-
-    if (!outputLanguage) {
-      outputLanguage = languageArr[1];
-    }
-
-    dispatch(translationActions.setOutputLanguage(outputLanguage));
-  }, [languageArr, lastUsedLanguageId, dispatch]);
+  useInitializeLanguages(lastUsedLanguageId);
+  usePersistLastUsedLanguage(outputLanguage?.id);
 
   // Output language change -> Clear translation output
   useEffect(() => {
-    dispatch(translationActions.clearTranslationOutput());
-  }, [outputLanguage, dispatch]);
+    clearTranslationOutput();
+  }, [clearTranslationOutput, outputLanguage]);
 
   // Sign out -> Clear input & translation output
   useEffect(() => {
     if (!userId) {
       inputSectionRef.current?.setInputText('');
-      dispatch(translationActions.clearTranslationOutput());
+      clearTranslationOutput();
     }
-  }, [userId, dispatch]);
-
-  // Signed in && Output language change -> Save last used language
-  useEffect(() => {
-    if (!userId || !outputLanguage) {
-      return;
-    }
-
-    fetch('/api/user', 'PATCH', { body: { lastUsedLanguageId: outputLanguage.id } })
-      .then(({ ok }) => {
-        if (!ok) {
-          throw new Error('Failed to save last used language');
-        }
-      })
-      .catch((err: unknown) => {
-        logErrorWithToast('user.saveLastUsedLanguage', err);
-      });
-  }, [userId, outputLanguage, fetch]);
+  }, [clearTranslationOutput, userId]);
 
   function translateHandler(inputText: string, outputLanguage: Language) {
     const trimmedInputText = inputText.trim();
 
     inputSectionRef.current?.setInputText(trimmedInputText);
-    dispatch(translationActions.setOutputLanguage(outputLanguage));
+    setOutputLanguage(outputLanguage);
 
     if (!trimmedInputText || isTranslating) {
       return;
@@ -142,111 +78,42 @@ function Translate() {
       lastTranslation.current.inputText === trimmedInputText &&
       lastTranslation.current.outputLanguageId === outputLanguage.id
     ) {
-      dispatch(
-        translationActions.setTranslationOutput({
-          originalLanguageName: lastTranslation.current.originalLanguageName,
-          inputTextSynonymArr: lastTranslation.current.inputTextSynonymArr,
-          translation: lastTranslation.current.translation,
-          translationSynonymArr: lastTranslation.current.translationSynonymArr,
-          exampleSentenceArr: lastTranslation.current.exampleSentenceArr,
-        }),
-      );
+      setTranslationOutput({
+        originalLanguageName: lastTranslation.current.originalLanguageName,
+        inputTextSynonymArr: lastTranslation.current.inputTextSynonymArr,
+        translation: lastTranslation.current.translation,
+        translationSynonymArr: lastTranslation.current.translationSynonymArr,
+        exampleSentenceArr: lastTranslation.current.exampleSentenceArr,
+      });
 
       return;
     }
 
-    dispatch(translationActions.clearTranslationOutput());
-    dispatch(translationActions.setIsTranslating(true));
+    clearTranslationOutput();
 
-    const query = `?text=${encodeURIComponent(trimmedInputText)}&outputLanguageId=${outputLanguage.id.toString()}`;
-
-    fetch(`/api/translation${query}`)
-      .then(({ ok, data = {}, message }) => {
-        if (!ok) {
-          let errorMessage: string | null;
-
-          switch (message) {
-            case 'Invalid input':
-              errorMessage = 'The input text is invalid';
-              break;
-            case 'Unauthorized':
-              errorMessage = 'Your session has expired, please sign in again.';
-              break;
-            case 'Too many requests':
-              errorMessage = 'You have reached the limit, please try again later.';
-              break;
-            default:
-              errorMessage = null;
-              break;
-          }
-
-          logErrorWithToast('translate.request', new Error(message), { toastMessage: errorMessage });
-          return;
-        }
-
-        const dataSchema = zod.object({
-          originalLanguageName: zod.string(),
-          inputTextSynonymArr: zod.array(zod.string()).optional(),
-          translation: zod.string(),
-          translationSynonymArr: zod.array(zod.string()).optional(),
-          exampleSentenceArr: zod
-            .array(
-              zod.object({
-                sentence: zod.string(),
-                translation: zod.string(),
-              }),
-            )
-            .optional(),
-        });
-
-        const { success, data: parseData } = dataSchema.safeParse(data);
-
-        if (!success) {
-          throw new Error('Invalid data format');
-        }
-
-        const {
-          originalLanguageName,
-          inputTextSynonymArr = [],
-          translation,
-          translationSynonymArr = [],
-          exampleSentenceArr = [],
-        } = parseData;
-
-        dispatch(
-          translationActions.setTranslationOutput({
-            originalLanguageName,
-            inputTextSynonymArr,
-            translation,
-            translationSynonymArr,
-            exampleSentenceArr,
-          }),
-        );
-
+    void requestTranslation({
+      inputText: trimmedInputText,
+      outputLanguageId: outputLanguage.id,
+    })
+      .then((translationOutput) => {
         lastTranslation.current = {
           inputText: trimmedInputText,
           outputLanguageId: outputLanguage.id,
-          originalLanguageName,
-          inputTextSynonymArr,
-          translation,
-          translationSynonymArr,
-          exampleSentenceArr,
+          ...translationOutput,
         };
 
-        // Same language
-        if (originalLanguageName.toLowerCase() === outputLanguage.name.toLowerCase()) {
+        if (translationOutput.originalLanguageName.toLowerCase() === outputLanguage.name.toLowerCase()) {
           toastInfo(`The input text is already in ${outputLanguage.name}`);
         }
       })
-      .catch((err: unknown) => {
-        logErrorWithToast('translate.request', err);
-      })
-      .finally(() => {
-        dispatch(translationActions.setIsTranslating(false));
+      .catch((error: unknown) => {
+        const toastMessage = isTranslationRequestErrorCode(error) ? TRANSLATION_ERROR_MESSAGES[error] : undefined;
+
+        logErrorWithToast('translate.request', error, { toastMessage });
       });
   }
 
-  if (!isDoneInitializing) {
+  if (!isLanguageReady) {
     return (
       <div className="page-spinner-container">
         <Spinner />

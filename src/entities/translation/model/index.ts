@@ -1,0 +1,1 @@
+export { translationReducer } from './translationSlice';

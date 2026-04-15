@@ -1,25 +1,25 @@
-import { useState, useRef, useCallback } from 'react';
+import { useId, useState, useRef, useCallback } from 'react';
 
 import ChevronIcon from '@/assets/chevron.svg?react';
-import LanguageSelector from '@/components/languageSelector/LanguageSelector';
+import { LanguageSelector, type Language, selectLanguageArr, selectOutputLanguage, useLanguageActions } from '@/entities/language';
+import { selectTranslationOutput } from '@/entities/translation';
 import { useClickOutsideHandler } from '@/shared/lib';
-import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
-import { Language } from '@/interfaces';
-import { translationActions } from '@/app/store';
+import { useAppSelector } from '@/app/store/hooks';
 
 function TranslationSection() {
-  const dispatch = useAppDispatch();
+  const { setOutputLanguage } = useLanguageActions();
 
   const [isOpenLanguageSelector, setIsOpenLanguageSelector] = useState(false);
+  const outputLanguageSelectorId = useId();
 
-  const languageArr = useAppSelector((state) => state.translation.languageArr);
-  const outputLanguage = useAppSelector((state) => state.translation.outputLanguage);
-  const translationOutput = useAppSelector((state) => state.translation.translationOutput);
+  const languageArr = useAppSelector(selectLanguageArr);
+  const outputLanguage = useAppSelector(selectOutputLanguage);
+  const translationOutput = useAppSelector(selectTranslationOutput);
 
   const languageButtonRef = useRef<HTMLButtonElement>(null);
   const languageSelectorRef = useRef<HTMLDivElement>(null);
 
-  const { translation } = translationOutput ?? {};
+  const translation = translationOutput?.translation ?? '';
 
   const closeLanguageSelector = useCallback(() => {
     setIsOpenLanguageSelector(false);
@@ -32,7 +32,7 @@ function TranslationSection() {
   }
 
   function languageSelectHandler(language: Language) {
-    dispatch(translationActions.setOutputLanguage(language));
+    setOutputLanguage(language);
     setIsOpenLanguageSelector(false);
   }
 
@@ -43,17 +43,26 @@ function TranslationSection() {
   return (
     <>
       <div className="translate__main--translation">
-        <button ref={languageButtonRef} className="language clickable" onClick={languageButtonClickHandler}>
+        <button
+          ref={languageButtonRef}
+          type="button"
+          className="language clickable"
+          data-testid="translate-output-language-button"
+          aria-expanded={isOpenLanguageSelector}
+          aria-controls={outputLanguageSelectorId}
+          onClick={languageButtonClickHandler}
+        >
           <p className="language__text">{outputLanguage.name}</p>
           <ChevronIcon className={`language__icon ${isOpenLanguageSelector ? 'active' : ''}`} />
         </button>
 
         <div className="input-container">
-          <textarea readOnly value={translation ?? ''} />
+          <textarea data-testid="translate-output-textarea" aria-label="Translation output" readOnly value={translation} />
         </div>
       </div>
 
       <LanguageSelector
+        panelId={outputLanguageSelectorId}
         ref={languageSelectorRef}
         isOpen={isOpenLanguageSelector}
         languageArr={languageArr}

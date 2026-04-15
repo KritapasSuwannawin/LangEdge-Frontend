@@ -1,5 +1,6 @@
 import { useAppSelector } from '@/app/store/hooks';
-import { Language } from '@/interfaces';
+import { type Language, selectLanguageArr, selectOutputLanguage } from '@/entities/language';
+import { selectOriginalLanguageName, selectInputTextSynonyms, selectTranslationSynonyms } from '@/entities/translation';
 
 interface SynonymSectionProps {
   type: 'inputSynonym' | 'translationSynonym';
@@ -9,11 +10,11 @@ interface SynonymSectionProps {
 function SynonymSection(props: SynonymSectionProps) {
   const { type, translateHandler } = props;
 
-  const languageArr = useAppSelector((state) => state.translation.languageArr);
-  const outputLanguage = useAppSelector((state) => state.translation.outputLanguage);
-  const translationOutput = useAppSelector((state) => state.translation.translationOutput);
-
-  const { originalLanguageName, inputTextSynonymArr, translationSynonymArr } = translationOutput ?? {};
+  const languageArr = useAppSelector(selectLanguageArr);
+  const outputLanguage = useAppSelector(selectOutputLanguage);
+  const originalLanguageName = useAppSelector(selectOriginalLanguageName);
+  const inputTextSynonymArr = useAppSelector(selectInputTextSynonyms);
+  const translationSynonymArr = useAppSelector(selectTranslationSynonyms);
 
   const className = type === 'inputSynonym' ? 'translate__synonym' : 'translate__more-translation';
   const synonymArr = type === 'inputSynonym' ? inputTextSynonymArr : translationSynonymArr;
@@ -31,7 +32,7 @@ function SynonymSection(props: SynonymSectionProps) {
     );
   }
 
-  if (!synonymArr || synonymArr.length === 0) {
+  if (synonymArr.length === 0) {
     return null;
   }
 
@@ -42,7 +43,13 @@ function SynonymSection(props: SynonymSectionProps) {
       <ul className="list-container">
         {synonymArr.map((synonym, index) => (
           <li key={index} className="item">
-            <button onClick={synonymClickHandler.bind(null, { synonym, isSwapLanguage: type === 'translationSynonym' })}>{synonym}</button>
+            <button
+              type="button"
+              data-testid={`translate-${type}-synonym-button-${index}`}
+              onClick={synonymClickHandler.bind(null, { synonym, isSwapLanguage: type === 'translationSynonym' })}
+            >
+              {synonym}
+            </button>
           </li>
         ))}
       </ul>

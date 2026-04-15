@@ -1,10 +1,11 @@
 import { useState, forwardRef, ForwardedRef, useImperativeHandle } from 'react';
 
 import { useSignIn } from '@/features/auth/sign-in';
+import { type Language, selectOutputLanguage } from '@/entities/language';
+import { selectIsTranslating, selectOriginalLanguageName, useTranslationActions } from '@/entities/translation';
+import { selectUserId } from '@/entities/user';
 import { Spinner } from '@/shared/ui';
-import { useAppSelector, useAppDispatch } from '@/app/store/hooks';
-import { Language } from '@/interfaces';
-import { translationActions } from '@/app/store';
+import { useAppSelector } from '@/app/store/hooks';
 import { logErrorWithToast } from '@/shared/lib';
 
 interface InputSectionProps {
@@ -14,19 +15,17 @@ interface InputSectionProps {
 function InputSection(props: InputSectionProps, ref: ForwardedRef<{ setInputText: (inputText: string) => void }>) {
   const { translateHandler } = props;
 
-  const dispatch = useAppDispatch();
   const signIn = useSignIn();
+  const { clearTranslationOutput } = useTranslationActions();
 
-  const userId = useAppSelector((state) => state.user.userId);
+  const userId = useAppSelector(selectUserId);
 
-  const outputLanguage = useAppSelector((state) => state.translation.outputLanguage);
-  const isTranslating = useAppSelector((state) => state.translation.isTranslating);
-  const translationOutput = useAppSelector((state) => state.translation.translationOutput);
+  const outputLanguage = useAppSelector(selectOutputLanguage);
+  const isTranslating = useAppSelector(selectIsTranslating);
+  const originalLanguageName = useAppSelector(selectOriginalLanguageName);
 
   const [inputText, setInputText] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
-
-  const { originalLanguageName } = translationOutput ?? {};
 
   useImperativeHandle(
     ref,
@@ -39,7 +38,7 @@ function InputSection(props: InputSectionProps, ref: ForwardedRef<{ setInputText
   function inputTextChangeHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {
     setInputText(event.target.value);
 
-    dispatch(translationActions.clearTranslationOutput());
+    clearTranslationOutput();
   }
 
   function signInClickHandler() {
@@ -67,17 +66,34 @@ function InputSection(props: InputSectionProps, ref: ForwardedRef<{ setInputText
       </div>
 
       <div className="input-container">
-        <textarea value={inputText} maxLength={400} onChange={inputTextChangeHandler} autoFocus />
+        <textarea
+          data-testid="translate-input-textarea"
+          aria-label="Text to translate"
+          value={inputText}
+          maxLength={400}
+          onChange={inputTextChangeHandler}
+          autoFocus
+        />
 
         <div className="input-container__bottom">
           <span className="input-container__bottom--counter">{inputText.length} / 400</span>
 
           {userId ? (
-            <button className="input-container__bottom--button" onClick={translateHandler.bind(null, inputText, outputLanguage)}>
+            <button
+              type="button"
+              className="input-container__bottom--button"
+              data-testid="translate-submit-button"
+              onClick={translateHandler.bind(null, inputText, outputLanguage)}
+            >
               {isTranslating ? <Spinner isThin /> : 'Translate'}
             </button>
           ) : (
-            <button className="input-container__bottom--button unauthenticated" onClick={signInClickHandler}>
+            <button
+              type="button"
+              className="input-container__bottom--button unauthenticated"
+              data-testid="translate-sign-in-button"
+              onClick={signInClickHandler}
+            >
               {isSigningIn ? <Spinner isThin /> : 'Sign in'}
             </button>
           )}

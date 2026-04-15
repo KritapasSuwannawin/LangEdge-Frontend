@@ -1,12 +1,12 @@
 import { useAppSelector } from '@/app/store/hooks';
-import { Profile } from '@/entities/user';
+import { Profile, selectUserId } from '@/entities/user';
 import { SignInButton } from '@/features/auth/sign-in';
 import { useSignOut } from '@/features/auth/sign-out';
 
 import './Nav.scss';
 
 function Nav() {
-  const userId = useAppSelector((state) => state.user.userId);
+  const userId = useAppSelector(selectUserId);
   const signOut = useSignOut();
 
   return (
