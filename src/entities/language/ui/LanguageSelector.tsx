@@ -25,6 +25,11 @@ function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDi
 
   useEffect(() => {
     setSearchQuery('');
+
+    if (!isOpen) {
+      return;
+    }
+
     searchQueryRef.current?.focus();
   }, [isOpen]);
 
@@ -55,7 +60,7 @@ function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDi
     });
 
   return (
-    <div id={panelId} className="language-selector" ref={ref} aria-label="Output language selector">
+    <div id={panelId} className="language-selector" ref={ref} role="dialog" aria-modal="false" aria-label="Output language selector">
       <div className="language-selector__search-container">
         <button
           type="button"
@@ -67,39 +72,46 @@ function LanguageSelector(props: LanguageSelectorProps, ref: ForwardedRef<HTMLDi
         </button>
 
         <div className="language-selector__search-field">
-          <label className="language-selector__search-label" htmlFor={searchInputId}>
-            Search languages
-          </label>
-
           <input
             id={searchInputId}
             ref={searchQueryRef}
             type="text"
+            aria-label="Search languages"
             placeholder="Search languages"
             value={searchQuery}
             onChange={searchQueryChangeHandler}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="none"
+            spellCheck={false}
             data-testid="language-selector-search-input"
           />
         </div>
       </div>
 
       <div className={`language-selector__item-container ${searchQuery.length > 0 ? 'search-active' : ''}`}>
-        {filteredLanguages.map((language) => {
-          const isSelectedLanguage = selectedLanguage.name === language.name;
+        {filteredLanguages.length > 0 ? (
+          filteredLanguages.map((language) => {
+            const isSelectedLanguage = selectedLanguage.name === language.name;
 
-          return (
-            <button
-              key={language.id}
-              type="button"
-              className={`item ${isSelectedLanguage ? 'selected' : ''}`}
-              aria-pressed={isSelectedLanguage}
-              data-testid={`language-selector-option-${language.id}`}
-              onClick={() => languageSelectHandler(language)}
-            >
-              <span>{language.name}</span>
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={language.id}
+                type="button"
+                className={`item ${isSelectedLanguage ? 'selected' : ''}`}
+                aria-pressed={isSelectedLanguage}
+                data-testid={`language-selector-option-${language.id}`}
+                onClick={() => languageSelectHandler(language)}
+              >
+                <span>{language.name}</span>
+              </button>
+            );
+          })
+        ) : (
+          <p className="language-selector__empty-state" role="status" data-testid="language-selector-empty-state">
+            No languages found
+          </p>
+        )}
       </div>
     </div>
   );

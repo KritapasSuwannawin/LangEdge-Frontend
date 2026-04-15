@@ -1,0 +1,142 @@
+@use '../../../scss/main.scss' as *;
+
+.translation-workspace__input,
+.translation-workspace__control {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1.2rem;
+  min-width: 0;
+
+  .language {
+    display: flex;
+    align-items: center;
+    column-gap: 1.2rem;
+    width: fit-content;
+
+    &.clickable {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    &__text {
+      font-size: 1.6rem;
+    }
+
+    &__icon {
+      width: 1.2rem;
+      transform: scaleY(-1);
+      fill: $color-black;
+      transition: transform 0.15s ease-out;
+
+      &.active {
+        transform: scaleY(1) translateY(1px);
+      }
+    }
+  }
+}
+
+.translation-workspace__input {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+
+  .input-container {
+    font-size: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: calc((1.5em * 6) + 6.1rem);
+    row-gap: 0.8rem;
+    border: 1px solid $color-outline;
+    border-radius: 0.8rem;
+    background: #fff;
+
+    textarea {
+      border: none;
+      outline: none;
+      resize: none;
+      width: 100%;
+      height: 100%;
+      padding: 0 1.2rem;
+      margin-top: 1rem;
+      scrollbar-width: none;
+      font-family: $font-content;
+
+      &::placeholder {
+        color: $color-placeholder;
+      }
+    }
+
+    &__bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 1.2rem 1rem;
+
+      &--counter {
+        font-size: 1.2rem;
+        color: $color-placeholder;
+      }
+
+      &--button {
+        @include button(
+          $font-weight: 500,
+          $padding: 0.6rem 1.2rem,
+          $border-radius: 0.6rem,
+          $background: $color-primary,
+          $color: $color-white,
+          $lightness: -5%
+        );
+
+        min-width: 9rem;
+
+        &:focus-visible {
+          outline: 2px solid $color-primary;
+          outline-offset: 2px;
+        }
+
+        &.unauthenticated {
+          @include button-secondary($font-weight: 500, $padding: 0.4rem 1.4rem, $border-radius: 0.8rem);
+          min-width: 7.4rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: $breakpoint-tablet-vertical) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+.translation-workspace__control {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  z-index: 1;
+
+  .language-selector {
+    top: 3.6rem;
+    right: 0;
+    width: calc(200% + #{$page-horizontal-padding});
+
+    @media (max-width: $breakpoint-tablet-vertical) {
+      top: 0;
+      left: 0;
+      right: auto;
+      width: 100%;
+      z-index: 3;
+    }
+  }
+
+  @media (max-width: $breakpoint-tablet-vertical) {
+    position: static;
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: calc(#{$page-horizontal-padding-medium} - 1.2rem);
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    margin-top: calc(#{$page-horizontal-padding-small} - 1.2rem);
+  }
+}

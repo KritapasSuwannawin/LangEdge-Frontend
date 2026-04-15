@@ -16,9 +16,17 @@ export interface LastTranslationCacheEntry extends TranslationOutput {
   readonly outputLanguageId: number;
 }
 
+export interface SubmitTranslationParams {
+  readonly inputText: string;
+  readonly outputLanguageId: number;
+  readonly outputLanguageName: string;
+}
+
 export interface TranslationState {
+  readonly inputText: string;
   readonly isTranslating: boolean;
   readonly translationOutput: TranslationOutput | undefined;
+  readonly lastTranslationCache: LastTranslationCacheEntry | undefined;
 }
 
 export interface TranslationRequestParams {

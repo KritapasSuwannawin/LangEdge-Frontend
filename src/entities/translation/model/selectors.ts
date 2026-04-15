@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { TranslationState, TranslationOutput, ExampleSentence } from './types';
+import type { ExampleSentence, LastTranslationCacheEntry, TranslationOutput, TranslationState } from './types';
 
 export interface TranslationRootState {
   readonly translation: TranslationState;
@@ -11,7 +11,10 @@ const EMPTY_EXAMPLE_SENTENCES: ExampleSentence[] = [];
 
 const selectTranslationState = (state: TranslationRootState): TranslationState => state.translation;
 
+export const selectTranslationInputText = (state: TranslationRootState): string => selectTranslationState(state).inputText;
 export const selectIsTranslating = (state: TranslationRootState): boolean => selectTranslationState(state).isTranslating;
+export const selectLastTranslationCache = (state: TranslationRootState): LastTranslationCacheEntry | undefined =>
+  selectTranslationState(state).lastTranslationCache;
 export const selectTranslationOutput = (state: TranslationRootState): TranslationOutput | undefined =>
   selectTranslationState(state).translationOutput;
 export const selectOriginalLanguageName = createSelector(

@@ -1,0 +1,33 @@
+@use '../../../scss/main.scss' as *;
+
+.translate {
+  position: relative;
+  @include page-style;
+}
+
+.translate__main {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: min-content;
+  column-gap: $page-horizontal-padding;
+  row-gap: 1.2rem;
+
+  @media (max-width: $breakpoint-tablet-vertical) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-flow: row;
+  }
+
+  > * {
+    min-width: 0;
+  }
+
+  @media (min-width: $breakpoint-tablet-vertical) {
+    &:not(:has(.translation-results__synonym)):has(.translation-results__more-translation) {
+      .translation-results__example-sentence {
+        grid-row: 3;
+        grid-column: 1;
+      }
+    }
+  }
+}

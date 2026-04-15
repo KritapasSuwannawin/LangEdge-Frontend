@@ -1,14 +1,19 @@
 import { useAppSelector } from '@/app/store/hooks';
-import { type Language, selectLanguageArr, selectOutputLanguage } from '@/entities/language';
-import { selectOriginalLanguageName, selectInputTextSynonyms, selectTranslationSynonyms } from '@/entities/translation';
+import { selectLanguageArr, selectOutputLanguage } from '@/entities/language';
+import {
+  selectOriginalLanguageName,
+  selectInputTextSynonyms,
+  selectTranslationSynonyms,
+  useSubmitTranslation,
+} from '@/entities/translation';
 
 interface SynonymSectionProps {
-  type: 'inputSynonym' | 'translationSynonym';
-  translateHandler: (inputText: string, outputLanguage: Language) => void;
+  readonly type: 'inputSynonym' | 'translationSynonym';
 }
 
 function SynonymSection(props: SynonymSectionProps) {
-  const { type, translateHandler } = props;
+  const { type } = props;
+  const submitTranslation = useSubmitTranslation();
 
   const languageArr = useAppSelector(selectLanguageArr);
   const outputLanguage = useAppSelector(selectOutputLanguage);
@@ -26,10 +31,15 @@ function SynonymSection(props: SynonymSectionProps) {
 
     const { synonym, isSwapLanguage } = options;
 
-    translateHandler(
-      synonym,
-      isSwapLanguage ? (languageArr.find((language) => language.name === originalLanguageName) ?? outputLanguage) : outputLanguage,
-    );
+    const selectedOutputLanguage = isSwapLanguage
+      ? (languageArr.find((language) => language.name === originalLanguageName) ?? outputLanguage)
+      : outputLanguage;
+
+    void submitTranslation({
+      inputText: synonym,
+      outputLanguageId: selectedOutputLanguage.id,
+      outputLanguageName: selectedOutputLanguage.name,
+    });
   }
 
   if (synonymArr.length === 0) {

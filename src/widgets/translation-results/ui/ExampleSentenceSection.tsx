@@ -1,20 +1,23 @@
-import { useAppSelector } from '@/app/store/hooks';
-import { selectExampleSentences } from '@/entities/translation';
+import type { ExampleSentence } from '@/entities/translation';
 
-function ExampleSentenceSection() {
-  const exampleSentenceArr = useAppSelector(selectExampleSentences);
+interface ExampleSentenceSectionProps {
+  readonly exampleSentenceArr: ExampleSentence[];
+}
+
+function ExampleSentenceSection(props: ExampleSentenceSectionProps): JSX.Element | null {
+  const { exampleSentenceArr } = props;
 
   if (exampleSentenceArr.length === 0) {
     return null;
   }
 
   return (
-    <div className="translate__example-sentence">
+    <div className="translation-results__example-sentence">
       <h2 className="title">Example sentences</h2>
 
       <ul className="list-container">
         {exampleSentenceArr.map(({ sentence, translation }, index) => (
-          <li key={index} className="item">
+          <li key={`${sentence}-${index}`} className="item">
             <p className="sentence">{sentence}</p>
             <p className="translation">{translation}</p>
           </li>

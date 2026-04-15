@@ -12,6 +12,7 @@ type TranslationDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 interface UseTranslationActionsResult {
   readonly clearTranslationOutput: () => void;
   readonly requestTranslation: (params: TranslationRequestParams) => Promise<TranslationOutput>;
+  readonly setInputText: (inputText: string) => void;
   readonly setTranslationOutput: (translationOutput: TranslationOutput) => void;
 }
 
@@ -21,6 +22,13 @@ export const useTranslationActions = (): UseTranslationActionsResult => {
   const clearTranslationOutput = useCallback((): void => {
     dispatch(translationActions.clearTranslationOutput());
   }, [dispatch]);
+
+  const setInputText = useCallback(
+    (inputText: string): void => {
+      dispatch(translationActions.setInputText(inputText));
+    },
+    [dispatch],
+  );
 
   const requestTranslation = useCallback(
     async (params: TranslationRequestParams): Promise<TranslationOutput> => {
@@ -39,6 +47,7 @@ export const useTranslationActions = (): UseTranslationActionsResult => {
   return {
     clearTranslationOutput,
     requestTranslation,
+    setInputText,
     setTranslationOutput,
   };
 };

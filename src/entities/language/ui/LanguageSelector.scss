@@ -50,9 +50,10 @@
     flex: 1;
   }
 
-  &__search-label {
-    white-space: nowrap;
-    font-size: 1.2rem;
+  &__empty-state {
+    padding: 1.2rem;
+    text-align: center;
+    color: $color-placeholder;
   }
 
   &__item-container {

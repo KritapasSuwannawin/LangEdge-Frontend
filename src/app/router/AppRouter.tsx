@@ -1,11 +1,11 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import Translate from '@/pages/translate/Translate';
+import TranslatePage from '@/pages/translate';
 
 function AppRouter(): JSX.Element {
   return (
     <Routes>
-      <Route path="/translate" element={<Translate />} />
+      <Route path="/translate" element={<TranslatePage />} />
       <Route path="*" element={<Navigate to="/translate" />} />
     </Routes>
   );

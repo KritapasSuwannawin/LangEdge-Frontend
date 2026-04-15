@@ -4,22 +4,34 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { sessionExpired } from '@/shared/lib';
 
 import { requestTranslationThunk } from './thunks';
-import type { TranslationOutput, TranslationState } from './types';
+import type { LastTranslationCacheEntry, TranslationOutput, TranslationState } from './types';
 
 const initialState: TranslationState = {
+  inputText: '',
   isTranslating: false,
   translationOutput: undefined,
+  lastTranslationCache: undefined,
 };
 
-const clearTranslationState = (state: { isTranslating: boolean; translationOutput: TranslationOutput | undefined }): void => {
+const clearTranslationState = (state: {
+  inputText: string;
+  isTranslating: boolean;
+  translationOutput: TranslationOutput | undefined;
+  lastTranslationCache: LastTranslationCacheEntry | undefined;
+}): void => {
+  state.inputText = '';
   state.isTranslating = false;
   state.translationOutput = undefined;
+  state.lastTranslationCache = undefined;
 };
 
 const translationSlice = createSlice({
   name: 'translation',
   initialState,
   reducers: {
+    setInputText: (state, action: PayloadAction<string>) => {
+      state.inputText = action.payload;
+    },
     setTranslationOutput: (state, action: PayloadAction<TranslationOutput>) => {
       state.translationOutput = action.payload;
     },
@@ -35,6 +47,11 @@ const translationSlice = createSlice({
       .addCase(requestTranslationThunk.fulfilled, (state, action) => {
         state.isTranslating = false;
         state.translationOutput = action.payload;
+        state.lastTranslationCache = {
+          inputText: action.meta.arg.inputText,
+          outputLanguageId: action.meta.arg.outputLanguageId,
+          ...action.payload,
+        };
       })
       .addCase(requestTranslationThunk.rejected, (state) => {
         state.isTranslating = false;
