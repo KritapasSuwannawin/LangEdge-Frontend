@@ -1,6 +1,6 @@
 import { useEffect, RefObject } from 'react';
 
-const useClickOutsideHandler = (state: boolean, clickOutsideHandler: () => void, elementRefArr: RefObject<Element>[]) => {
+const useClickOutsideHandler = (state: boolean, clickOutsideHandler: () => void, elementRefArr: RefObject<Element>[]): void => {
   useEffect(() => {
     if (!state) {
       return;

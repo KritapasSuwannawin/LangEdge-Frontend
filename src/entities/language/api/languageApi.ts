@@ -2,7 +2,7 @@ import zod from 'zod';
 
 import { ApiInvalidResponseError, requestJson } from '@/shared/api';
 
-import type { Language } from '../model/language';
+import type { Language } from '@/entities/language/model/language';
 
 const languageSchema = zod.object({
   id: zod.number().int().positive(),

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { getLanguageList } from '../api/languageApi';
+import { getLanguageList } from '@/entities/language/api/languageApi';
 
 import type { Language } from './language';
 import { languageActions } from './languageSlice';

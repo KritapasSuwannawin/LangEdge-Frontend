@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/app/store';
 import { Profile, selectUserId } from '@/entities/user';
-import { SignInButton } from '@/features/auth/sign-in';
-import { useSignOut } from '@/features/auth/sign-out';
+import { SignInButton } from '@/features/auth';
+import { useSignOut } from '@/features/auth';
 
 import './Nav.scss';
 

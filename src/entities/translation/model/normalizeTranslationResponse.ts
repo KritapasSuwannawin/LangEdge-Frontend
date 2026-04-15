@@ -1,4 +1,4 @@
-import type { TranslationResponse } from '../api/translationApi';
+import type { TranslationResponse } from '@/entities/translation/api/translationApi';
 
 import type { TranslationOutput } from './types';
 

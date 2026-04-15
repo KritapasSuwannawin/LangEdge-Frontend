@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useId, forwardRef, type ForwardedRef } fro
 
 import ArrowIcon from '@/assets/arrow.svg?react';
 
-import type { Language } from '../model/language';
+import type { Language } from '@/entities/language/model/language';
 
 import './LanguageSelector.scss';
 

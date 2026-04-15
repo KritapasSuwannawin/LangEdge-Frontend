@@ -1,4 +1,4 @@
-import { useTranslationWorkspace } from '../model/useTranslationWorkspace';
+import { useTranslationWorkspace } from '@/widgets/translation-workspace/model/useTranslationWorkspace';
 
 import InputSection from './InputSection';
 import OutputLanguageControl from './OutputLanguageControl';

@@ -10,7 +10,7 @@ import {
   useTranslationActions,
 } from '@/entities/translation';
 import { selectUserId, usePersistLastUsedLanguage } from '@/entities/user';
-import { useSignIn } from '@/features/auth/sign-in';
+import { useSignIn } from '@/features/auth';
 import { logErrorWithToast, useClickOutsideHandler } from '@/shared/lib';
 
 interface UseTranslationWorkspaceResult {

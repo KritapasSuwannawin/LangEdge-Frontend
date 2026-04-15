@@ -6,7 +6,7 @@ import XmarkIcon from '@/assets/xmark.svg?react';
 import { useClickOutsideHandler } from '@/shared/lib';
 import { useAppSelector } from '@/app/store/hooks';
 import { fadingStyle } from '@/shared/lib';
-import { selectUserPictureUrl, selectUserName, selectUserEmail } from '../model/userSlice';
+import { selectUserPictureUrl, selectUserName, selectUserEmail } from '@/entities/user/model/userSlice';
 
 import './Profile.scss';
 

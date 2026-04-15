@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { eraseToken, sessionExpired } from '@/shared/lib';
 
-import { requestTranslation, TranslationRequestError, type TranslationRequestErrorCode } from '../api/translationApi';
+import { requestTranslation, TranslationRequestError, type TranslationRequestErrorCode } from '@/entities/translation/api/translationApi';
 
 import { normalizeTranslationResponse } from './normalizeTranslationResponse';
 import type { TranslationRequestParams, TranslationOutput } from './types';

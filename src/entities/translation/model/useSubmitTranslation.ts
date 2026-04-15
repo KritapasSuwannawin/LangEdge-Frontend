@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import { logErrorWithToast, toastInfo } from '@/shared/lib';
 
-import type { TranslationRequestErrorCode } from '../api/translationApi';
-import { isTranslationRequestErrorCode } from '../api/translationApi';
+import type { TranslationRequestErrorCode } from '@/entities/translation/api/translationApi';
+import { isTranslationRequestErrorCode } from '@/entities/translation/api/translationApi';
 
 import { selectIsTranslating, selectLastTranslationCache } from './selectors';
 import { requestTranslationThunk } from './thunks';

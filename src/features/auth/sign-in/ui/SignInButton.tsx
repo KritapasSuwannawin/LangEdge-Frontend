@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Spinner } from '@/shared/ui';
 import { logErrorWithToast } from '@/shared/lib';
 
-import useSignIn from '../model/useSignIn';
+import useSignIn from '@/features/auth/sign-in/model/useSignIn';
 
 import './SignInButton.scss';
 

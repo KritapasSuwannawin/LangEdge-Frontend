@@ -7,9 +7,9 @@ import { userActions, userSignInResponseSchema, type UserSignInData, type UserSi
 
 import { useAppDispatch } from '@/app/store';
 
-import { resolveE2EAuthTokens } from '../lib/resolveE2EAuthTokens';
+import { resolveE2EAuthTokens } from '@/features/auth/sign-in/lib/resolveE2EAuthTokens';
 
-const useSignIn = () => {
+const useSignIn = (): ((options?: { isAutoSignIn?: boolean }) => Promise<void>) => {
   const dispatch = useAppDispatch();
 
   return useCallback(

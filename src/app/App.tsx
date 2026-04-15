@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 
 import { Nav } from '@/widgets/navigation';
-import { useSignIn } from '@/features/auth/sign-in';
+import { useSignIn } from '@/features/auth';
 import { Spinner } from '@/shared/ui';
 import { AppRouter } from '@/app/router';
 import { logError } from '@/shared/lib';

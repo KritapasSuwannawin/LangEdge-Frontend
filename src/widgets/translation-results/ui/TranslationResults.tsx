@@ -1,4 +1,4 @@
-import { useTranslationResults } from '../model/useTranslationResults';
+import { useTranslationResults } from '@/widgets/translation-results/model/useTranslationResults';
 
 import ExampleSentenceSection from './ExampleSentenceSection';
 import SynonymSection from './SynonymSection';

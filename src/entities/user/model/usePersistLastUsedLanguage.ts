@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/app/store';
 import { ApiUnauthorizedError } from '@/shared/api';
 import { eraseToken, logErrorWithToast, sessionExpired } from '@/shared/lib';
 
-import { updateLastUsedLanguage } from '../api/updateLastUsedLanguage';
+import { updateLastUsedLanguage } from '@/entities/user/api/updateLastUsedLanguage';
 
 import { selectLastUsedLanguageId, selectUserId, userActions } from './userSlice';
 

@@ -4,7 +4,7 @@ import { eraseToken, sessionExpired } from '@/shared/lib';
 
 import { useAppDispatch } from '@/app/store';
 
-const useSignOut = () => {
+const useSignOut = (): (() => void) => {
   const dispatch = useAppDispatch();
 
   return useCallback(() => {
