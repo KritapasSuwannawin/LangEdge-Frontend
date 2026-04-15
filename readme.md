@@ -27,6 +27,17 @@ LangEdge is a web application designed to make language learning and translation
 - **Styling**: CSS/SCSS
 - **Deployment**: Cloudflare Pages
 
+## Architecture
+
+This project follows **Feature-Sliced Design (FSD)** methodology to ensure a scalable and maintainable frontend. The codebase is organized into strict layers where dependencies only flow downwards:
+
+- `app/` — Global setup, routing, store configuration, and app-level providers.
+- `pages/` — Route-level UI composition.
+- `widgets/` — Complex composite UI blocks used across pages.
+- `features/` — Moduler user interactions and distinct business functionality (e.g., auth actions).
+- `entities/` — Core business entities, their state, and focused UI components (e.g., user, language).
+- `shared/` — Reusable components, generic API clients, and project-wide utilities.
+
 ## Roadmap / Future Plans
 
 1. **Text-to-Speech Implementation**: Add voice output for translated content
