@@ -4,7 +4,7 @@ import ArrowIcon from '@/assets/arrow.svg?react';
 
 import type { Language } from '@/entities/language/model/language';
 
-import './LanguageSelector.scss';
+import '@/entities/language/ui/LanguageSelector.scss';
 
 interface LanguageSelectorProps {
   readonly panelId?: string;

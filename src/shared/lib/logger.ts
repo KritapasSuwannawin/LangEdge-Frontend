@@ -1,4 +1,4 @@
-import { toastError } from './toast';
+import { toastError } from '@/shared/lib/toast';
 
 type LogMetadataValue = boolean | number | string | null | undefined;
 

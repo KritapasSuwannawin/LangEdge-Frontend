@@ -2,8 +2,8 @@ import zod from 'zod';
 
 import { getToken, setToken } from '@/shared/lib';
 
-import { ApiInvalidResponseError, ApiUnauthorizedError } from './errors';
-import { requestJson, type JsonResponse, type RequestJsonOptions } from './httpClient';
+import { ApiInvalidResponseError, ApiUnauthorizedError } from '@/shared/api/errors';
+import { requestJson, type JsonResponse, type RequestJsonOptions } from '@/shared/api/httpClient';
 
 const refreshTokenResponseSchema = zod.object({
   accessToken: zod.string(),

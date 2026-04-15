@@ -4,8 +4,8 @@ import { eraseToken, sessionExpired } from '@/shared/lib';
 
 import { requestTranslation, TranslationRequestError, type TranslationRequestErrorCode } from '@/entities/translation/api/translationApi';
 
-import { normalizeTranslationResponse } from './normalizeTranslationResponse';
-import type { TranslationRequestParams, TranslationOutput } from './types';
+import { normalizeTranslationResponse } from '@/entities/translation/model/normalizeTranslationResponse';
+import type { TranslationRequestParams, TranslationOutput } from '@/entities/translation/model/types';
 
 export const requestTranslationThunk = createAsyncThunk<
   TranslationOutput,

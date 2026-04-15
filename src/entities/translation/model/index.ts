@@ -1,1 +1,1 @@
-export { translationReducer } from './translationSlice';
+export { translationReducer } from '@/entities/translation/model/translationSlice';

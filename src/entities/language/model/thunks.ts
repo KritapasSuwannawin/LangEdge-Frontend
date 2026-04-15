@@ -2,9 +2,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { getLanguageList } from '@/entities/language/api/languageApi';
 
-import type { Language } from './language';
-import { languageActions } from './languageSlice';
-import type { LanguageState } from './languageSlice';
+import type { Language } from '@/entities/language/model/language';
+import { languageActions } from '@/entities/language/model/languageSlice';
+import type { LanguageState } from '@/entities/language/model/languageSlice';
 
 const DEFAULT_OUTPUT_LANGUAGE_NAME = 'English';
 

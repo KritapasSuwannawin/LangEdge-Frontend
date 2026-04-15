@@ -7,7 +7,7 @@ import { Spinner } from '@/shared/ui';
 import { AppRouter } from '@/app/router';
 import { logError } from '@/shared/lib';
 
-import './App.scss';
+import '@/app/App.scss';
 
 function App(): JSX.Element {
   const signIn = useSignIn();

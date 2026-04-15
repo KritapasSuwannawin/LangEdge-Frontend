@@ -6,7 +6,7 @@ import { eraseToken, logErrorWithToast, sessionExpired } from '@/shared/lib';
 
 import { updateLastUsedLanguage } from '@/entities/user/api/updateLastUsedLanguage';
 
-import { selectLastUsedLanguageId, selectUserId, userActions } from './userSlice';
+import { selectLastUsedLanguageId, selectUserId, userActions } from '@/entities/user/model/userSlice';
 
 export const usePersistLastUsedLanguage = (selectedLanguageId?: number): void => {
   const dispatch = useAppDispatch();

@@ -1,10 +1,10 @@
 import { useTranslationResults } from '@/widgets/translation-results/model/useTranslationResults';
 
-import ExampleSentenceSection from './ExampleSentenceSection';
-import SynonymSection from './SynonymSection';
-import TranslationOutputSection from './TranslationOutputSection';
+import ExampleSentenceSection from '@/widgets/translation-results/ui/ExampleSentenceSection';
+import SynonymSection from '@/widgets/translation-results/ui/SynonymSection';
+import TranslationOutputSection from '@/widgets/translation-results/ui/TranslationOutputSection';
 
-import './TranslationResults.scss';
+import '@/widgets/translation-results/ui/TranslationResults.scss';
 
 function TranslationResults(): JSX.Element {
   const {

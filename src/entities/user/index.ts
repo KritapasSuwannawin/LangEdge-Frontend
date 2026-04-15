@@ -1,9 +1,9 @@
-export type { UserState } from './model/userSlice';
-export { userReducer } from './model/userSlice';
-export { userActions } from './model/userSlice';
-export { selectUserId, selectUserName, selectUserEmail, selectUserPictureUrl, selectLastUsedLanguageId } from './model/userSlice';
-export type { UserSignInPayload, UserSignInData } from './api/userApi';
-export { userSignInResponseSchema } from './api/userApi';
-export { updateLastUsedLanguage } from './api/updateLastUsedLanguage';
-export { usePersistLastUsedLanguage } from './model/usePersistLastUsedLanguage';
-export { default as Profile } from './ui/Profile';
+export type { UserState } from '@/entities/user/model/userSlice';
+export { userReducer } from '@/entities/user/model/userSlice';
+export { userActions } from '@/entities/user/model/userSlice';
+export { selectUserId, selectUserName, selectUserEmail, selectUserPictureUrl, selectLastUsedLanguageId } from '@/entities/user/model/userSlice';
+export type { UserSignInPayload, UserSignInData } from '@/entities/user/api/userApi';
+export { userSignInResponseSchema } from '@/entities/user/api/userApi';
+export { updateLastUsedLanguage } from '@/entities/user/api/updateLastUsedLanguage';
+export { usePersistLastUsedLanguage } from '@/entities/user/model/usePersistLastUsedLanguage';
+export { default as Profile } from '@/entities/user/ui/Profile';

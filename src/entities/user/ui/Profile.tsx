@@ -8,7 +8,7 @@ import { useAppSelector } from '@/app/store/hooks';
 import { fadingStyle } from '@/shared/lib';
 import { selectUserPictureUrl, selectUserName, selectUserEmail } from '@/entities/user/model/userSlice';
 
-import './Profile.scss';
+import '@/entities/user/ui/Profile.scss';
 
 interface ProfileProps {
   onSignOut: () => void;

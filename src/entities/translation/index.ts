@@ -5,8 +5,8 @@ export type {
   TranslationOutput,
   TranslationRequestParams,
   TranslationState,
-} from './model/types';
-export { translationActions, translationReducer } from './model/translationSlice';
+} from '@/entities/translation/model/types';
+export { translationActions, translationReducer } from '@/entities/translation/model/translationSlice';
 export {
   selectExampleSentences,
   selectInputTextSynonyms,
@@ -16,9 +16,9 @@ export {
   selectTranslationInputText,
   selectTranslationOutput,
   selectTranslationSynonyms,
-} from './model/selectors';
-export { requestTranslationThunk } from './model/thunks';
-export { useTranslationActions } from './model/hooks';
-export { useSubmitTranslation } from './model/useSubmitTranslation';
-export type { TranslationRequestErrorCode, TranslationResponse } from './api/translationApi';
-export { isTranslationRequestErrorCode, requestTranslation, translationResponseSchema } from './api/translationApi';
+} from '@/entities/translation/model/selectors';
+export { requestTranslationThunk } from '@/entities/translation/model/thunks';
+export { useTranslationActions } from '@/entities/translation/model/hooks';
+export { useSubmitTranslation } from '@/entities/translation/model/useSubmitTranslation';
+export type { TranslationRequestErrorCode, TranslationResponse } from '@/entities/translation/api/translationApi';
+export { isTranslationRequestErrorCode, requestTranslation, translationResponseSchema } from '@/entities/translation/api/translationApi';

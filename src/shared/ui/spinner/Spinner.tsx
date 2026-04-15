@@ -1,4 +1,4 @@
-import './Spinner.scss';
+import '@/shared/ui/spinner/Spinner.scss';
 
 interface SpinnerProps {
   isThin?: boolean;

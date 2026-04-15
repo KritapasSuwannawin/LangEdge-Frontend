@@ -6,10 +6,10 @@ import { logErrorWithToast, toastInfo } from '@/shared/lib';
 import type { TranslationRequestErrorCode } from '@/entities/translation/api/translationApi';
 import { isTranslationRequestErrorCode } from '@/entities/translation/api/translationApi';
 
-import { selectIsTranslating, selectLastTranslationCache } from './selectors';
-import { requestTranslationThunk } from './thunks';
-import { translationActions } from './translationSlice';
-import type { LastTranslationCacheEntry, SubmitTranslationParams, TranslationOutput } from './types';
+import { selectIsTranslating, selectLastTranslationCache } from '@/entities/translation/model/selectors';
+import { requestTranslationThunk } from '@/entities/translation/model/thunks';
+import { translationActions } from '@/entities/translation/model/translationSlice';
+import type { LastTranslationCacheEntry, SubmitTranslationParams, TranslationOutput } from '@/entities/translation/model/types';
 
 const TRANSLATION_ERROR_MESSAGES: Record<TranslationRequestErrorCode, string | null> = {
   invalidInput: 'The input text is invalid',

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import type { Language } from './language';
+import type { Language } from '@/entities/language/model/language';
 
 export interface LanguageState {
   readonly languageArr: Language[] | undefined;

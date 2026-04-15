@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import { AppProviders } from '@/app/providers';
 import App from '@/app/App';
 
-import './index.scss';
+import '@/index.scss';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

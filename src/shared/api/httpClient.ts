@@ -1,4 +1,4 @@
-import { ApiInvalidResponseError, ApiNetworkError, ApiRateLimitError, ApiResponseError, ApiUnauthorizedError } from './errors';
+import { ApiInvalidResponseError, ApiNetworkError, ApiRateLimitError, ApiResponseError, ApiUnauthorizedError } from '@/shared/api/errors';
 
 const DEFAULT_ERROR_MESSAGE = 'Unknown error';
 const DEFAULT_SUCCESS_MESSAGE = 'Success';

@@ -1,2 +1,2 @@
-export * from './sign-in';
-export * from './sign-out';
+export * from '@/features/auth/sign-in';
+export * from '@/features/auth/sign-out';

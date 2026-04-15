@@ -5,7 +5,7 @@ import { logErrorWithToast } from '@/shared/lib';
 
 import useSignIn from '@/features/auth/sign-in/model/useSignIn';
 
-import './SignInButton.scss';
+import '@/features/auth/sign-in/ui/SignInButton.scss';
 
 function SignInButton() {
   const signIn = useSignIn();

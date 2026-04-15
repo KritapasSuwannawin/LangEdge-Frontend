@@ -3,7 +3,7 @@ import { Profile, selectUserId } from '@/entities/user';
 import { SignInButton } from '@/features/auth';
 import { useSignOut } from '@/features/auth';
 
-import './Nav.scss';
+import '@/widgets/navigation/ui/Nav.scss';
 
 function Nav(): JSX.Element {
   const userId = useAppSelector(selectUserId);

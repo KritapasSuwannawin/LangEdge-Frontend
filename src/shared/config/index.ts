@@ -1,1 +1,1 @@
-export { googleSignIn } from './firebase';
+export { googleSignIn } from '@/shared/config/firebase';

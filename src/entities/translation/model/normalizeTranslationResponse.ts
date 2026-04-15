@@ -1,6 +1,6 @@
 import type { TranslationResponse } from '@/entities/translation/api/translationApi';
 
-import type { TranslationOutput } from './types';
+import type { TranslationOutput } from '@/entities/translation/model/types';
 
 export const normalizeTranslationResponse = (translationResponse: TranslationResponse): TranslationOutput => {
   return {

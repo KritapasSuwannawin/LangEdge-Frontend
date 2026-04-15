@@ -1,1 +1,1 @@
-export { default as Spinner } from './spinner/Spinner';
+export { default as Spinner } from '@/shared/ui/spinner/Spinner';

@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { Language } from './language';
-import type { LanguageState } from './languageSlice';
+import type { Language } from '@/entities/language/model/language';
+import type { LanguageState } from '@/entities/language/model/languageSlice';
 
 export interface LanguageRootState {
   readonly language: LanguageState;

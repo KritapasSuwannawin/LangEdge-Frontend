@@ -1,9 +1,9 @@
 import { useTranslationWorkspace } from '@/widgets/translation-workspace/model/useTranslationWorkspace';
 
-import InputSection from './InputSection';
-import OutputLanguageControl from './OutputLanguageControl';
+import InputSection from '@/widgets/translation-workspace/ui/InputSection';
+import OutputLanguageControl from '@/widgets/translation-workspace/ui/OutputLanguageControl';
 
-import './TranslationWorkspace.scss';
+import '@/widgets/translation-workspace/ui/TranslationWorkspace.scss';
 
 function TranslationWorkspace(): JSX.Element | null {
   const {

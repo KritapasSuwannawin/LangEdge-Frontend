@@ -3,8 +3,8 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 import { sessionExpired } from '@/shared/lib';
 
-import { requestTranslationThunk } from './thunks';
-import type { LastTranslationCacheEntry, TranslationOutput, TranslationState } from './types';
+import { requestTranslationThunk } from '@/entities/translation/model/thunks';
+import type { LastTranslationCacheEntry, TranslationOutput, TranslationState } from '@/entities/translation/model/types';
 
 const initialState: TranslationState = {
   inputText: '',

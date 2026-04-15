@@ -3,9 +3,9 @@ import { useCallback, useEffect } from 'react';
 import { useAppDispatch } from '@/app/store';
 import { logErrorWithToast } from '@/shared/lib';
 
-import type { Language } from './language';
-import { languageActions } from './languageSlice';
-import { loadLanguagesThunk } from './thunks';
+import type { Language } from '@/entities/language/model/language';
+import { languageActions } from '@/entities/language/model/languageSlice';
+import { loadLanguagesThunk } from '@/entities/language/model/thunks';
 
 interface UseLanguageActionsResult {
   readonly setOutputLanguage: (language: Language) => void;

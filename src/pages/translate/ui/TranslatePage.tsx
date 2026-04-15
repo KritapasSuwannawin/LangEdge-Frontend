@@ -5,7 +5,7 @@ import { Spinner } from '@/shared/ui';
 import { TranslationResults } from '@/widgets/translation-results';
 import { TranslationWorkspace } from '@/widgets/translation-workspace';
 
-import './TranslatePage.scss';
+import '@/pages/translate/ui/TranslatePage.scss';
 
 function TranslatePage(): JSX.Element {
   const lastUsedLanguageId = useAppSelector(selectLastUsedLanguageId);

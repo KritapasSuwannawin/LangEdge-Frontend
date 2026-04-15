@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import type { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 
-import { requestTranslationThunk } from './thunks';
-import { translationActions } from './translationSlice';
-import type { TranslationOutput, TranslationRequestParams } from './types';
+import { requestTranslationThunk } from '@/entities/translation/model/thunks';
+import { translationActions } from '@/entities/translation/model/translationSlice';
+import type { TranslationOutput, TranslationRequestParams } from '@/entities/translation/model/types';
 
 type TranslationDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 

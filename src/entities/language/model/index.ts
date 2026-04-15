@@ -1,1 +1,1 @@
-export { languageReducer } from './languageSlice';
+export { languageReducer } from '@/entities/language/model/languageSlice';

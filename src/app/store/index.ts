@@ -21,4 +21,4 @@ export type AppDispatch = typeof store.dispatch;
 
 export default store;
 
-export { useAppDispatch, useAppSelector } from './hooks';
+export { useAppDispatch, useAppSelector } from '@/app/store/hooks';

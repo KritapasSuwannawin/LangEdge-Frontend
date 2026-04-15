@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { ExampleSentence, LastTranslationCacheEntry, TranslationOutput, TranslationState } from './types';
+import type { ExampleSentence, LastTranslationCacheEntry, TranslationOutput, TranslationState } from '@/entities/translation/model/types';
 
 export interface TranslationRootState {
   readonly translation: TranslationState;

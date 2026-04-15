@@ -1,6 +1,6 @@
-export * from './browser';
-export * from './toast';
-export * from './transition';
-export * from './logger';
-export * from './session';
-export { default as useClickOutsideHandler } from './useClickOutsideHandler';
+export * from '@/shared/lib/browser';
+export * from '@/shared/lib/toast';
+export * from '@/shared/lib/transition';
+export * from '@/shared/lib/logger';
+export * from '@/shared/lib/session';
+export { default as useClickOutsideHandler } from '@/shared/lib/useClickOutsideHandler';

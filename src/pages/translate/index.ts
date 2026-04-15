@@ -1,1 +1,1 @@
-export { default } from './ui/TranslatePage';
+export { default } from '@/pages/translate/ui/TranslatePage';
