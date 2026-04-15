@@ -7,6 +7,8 @@ import { userActions, userSignInResponseSchema, type UserSignInData, type UserSi
 
 import { useAppDispatch } from '@/app/store';
 
+import { resolveE2EAuthTokens } from '../lib/resolveE2EAuthTokens';
+
 const useSignIn = () => {
   const dispatch = useAppDispatch();
 
@@ -29,12 +31,18 @@ const useSignIn = () => {
           refreshToken: storedRefreshToken,
         };
       } else {
-        const { user } = await googleSignIn();
+        const e2eAuthTokens = resolveE2EAuthTokens();
 
-        authTokens = {
-          accessToken: await user.getIdToken(),
-          refreshToken: user.refreshToken,
-        };
+        if (e2eAuthTokens) {
+          authTokens = e2eAuthTokens;
+        } else {
+          const { user } = await googleSignIn();
+
+          authTokens = {
+            accessToken: await user.getIdToken(),
+            refreshToken: user.refreshToken,
+          };
+        }
       }
 
       try {

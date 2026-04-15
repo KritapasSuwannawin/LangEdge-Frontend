@@ -27,7 +27,7 @@ function SignInButton() {
   }
 
   return (
-    <button className="sign-in-btn" onClick={signInClickHandler}>
+    <button type="button" className="sign-in-btn" data-testid="nav-sign-in-button" onClick={signInClickHandler}>
       {isSigningIn ? <Spinner isThin /> : 'Sign in'}
     </button>
   );

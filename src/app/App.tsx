@@ -26,7 +26,7 @@ function App(): JSX.Element {
 
   if (isSigningIn) {
     return (
-      <div className="app-spinner-container">
+      <div className="app-spinner-container" data-testid="app-bootstrap-spinner">
         <Spinner />
       </div>
     );

@@ -15,7 +15,7 @@ function TranslatePage(): JSX.Element {
 
   if (!isLanguageReady) {
     return (
-      <div className="page-spinner-container">
+      <div className="page-spinner-container" data-testid="translate-page-loading-spinner">
         <Spinner />
       </div>
     );

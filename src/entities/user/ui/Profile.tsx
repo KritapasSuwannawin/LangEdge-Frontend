@@ -45,13 +45,14 @@ function Profile({ onSignOut }: ProfileProps) {
         src={pictureUrl}
         alt="Profile"
         className={`profile__picture ${isProfileDetailsOpen ? 'active' : ''}`}
+        data-testid="nav-profile-toggle"
         ref={profilePictureRef}
         onClick={toggleProfileDetailsHandler}
       />
 
       <Transition nodeRef={profileDetailsRef} in={isProfileDetailsOpen} timeout={150} mountOnEnter unmountOnExit>
         {(state) => (
-          <div className="profile__details" ref={profileDetailsRef} style={fadingStyle(state)}>
+          <div className="profile__details" data-testid="nav-profile-details" ref={profileDetailsRef} style={fadingStyle(state)}>
             <div className="profile__details--personal-info">
               <div className="left">
                 <img src={pictureUrl} alt="Profile" className="picture" />
@@ -62,12 +63,12 @@ function Profile({ onSignOut }: ProfileProps) {
                 <p className="email">{email}</p>
               </div>
 
-              <button className="close-btn" onClick={closeProfileDetails}>
+              <button type="button" className="close-btn" onClick={closeProfileDetails}>
                 <XmarkIcon></XmarkIcon>
               </button>
             </div>
 
-            <button className="profile__sign-out-btn" onClick={signoutHandler}>
+            <button type="button" className="profile__sign-out-btn" data-testid="nav-sign-out-button" onClick={signoutHandler}>
               <SignOutIcon></SignOutIcon> Sign out
             </button>
           </div>
