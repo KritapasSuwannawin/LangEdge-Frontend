@@ -39,26 +39,26 @@ LangEdge is a web application designed to make language learning and translation
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Set up environment variables
 4. Start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ## Building for Production
 
 ```bash
-npm run build
+pnpm build
 ```
 
 ## Type Checking
 
 ```bash
-npm run typecheck
+pnpm typecheck
 ```
 
 ## Copyright
